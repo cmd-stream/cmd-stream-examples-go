@@ -1,9 +1,8 @@
 # cmd-stream-examples-go
 Demonstrates several examples of using the [cmd-stream-go](https://github.com/cmd-stream/cmd-stream-go)
-with the [mus-stream-go](https://github.com/mus-format/mus-stream-go) serializer 
-(you can use any other serializer). It consists of the following packages 
-(each package is one example):
-- starndard - demonstrates the standard use of the cmd-stream-go.
+with the [mus-stream-go](https://github.com/mus-format/mus-stream-go) 
+serializer. It consists of the following packages (each package is one example):
+- standard - demonstrates the standard use of the cmd-stream-go.
 - multi-result - demonstrates an example where the command returns multiple 
   results.
 - max-cmd-size - shows how you can set the maximum command size supported by 
