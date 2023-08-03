@@ -23,7 +23,7 @@ func (f connFactory) New() (net.Conn, error) {
 	return net.Dial("tcp", Addr)
 }
 
-// This example shows how you can implement RPC using the cmd-stream-go.
+// This example shows how you can implement RPC using cmd-stream-go.
 //
 // Here we have struct{} as the receiver, and examples.EchoCmd as a command.
 func main() {

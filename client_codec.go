@@ -7,7 +7,8 @@ import (
 
 type ClientCodec struct{}
 
-// If the Encode method fails with an error, the Client.Send will return it.
+// If the Encode method fails with an error, the Client.Send method will return
+// it.
 func (c ClientCodec) Encode(cmd base.Cmd[struct{}], w transport.Writer) (
 	err error) {
 	_, err = MarshalEchoCmdMUS(cmd.(EchoCmd), w)

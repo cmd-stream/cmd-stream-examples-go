@@ -24,8 +24,8 @@ const Addr = "127.0.0.1:9000"
 const MaxCmdLength = 15
 
 // In this example, we're placing a limit on the maximum size of a command that
-// the server can accept. We do this with help of the ServerSettings, which is
-// sent to the client, and with the ServerCodec, which checks the size of all
+// the server can accept. We do this with help of ServerSettings, which is
+// sent to the client, and with ServerCodec, which checks the size of all
 // incoming commands.
 //
 // Here we have struct{} as the receiver, and examples.EchoCmd as a command.

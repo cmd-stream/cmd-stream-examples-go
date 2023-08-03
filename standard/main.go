@@ -19,7 +19,7 @@ const Addr = "127.0.0.1:9000"
 
 // This example demonstrates the standard usage of the client and server.
 //
-// Here we have the Calculator as the receiver, and Eq1Cmd, Eq2Cmd as commands.
+// Here we have Calculator as the receiver, and Eq1Cmd, Eq2Cmd as commands.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)
