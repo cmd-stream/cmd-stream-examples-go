@@ -11,8 +11,8 @@ import (
 	"github.com/mus-format/mus-stream-go/ord"
 )
 
-// ServerCodec should check a command length in Decode, if the command is too
-// big it returns an error and connection with the client will be closed.
+// ServerCodec checks the size of the incoming command in Decode, if it is too
+// big, an error is returned (i.e., the connection to the client is closed).
 type ServerCodec struct {
 	examples.ServerCodec
 }

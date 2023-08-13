@@ -25,6 +25,8 @@ func (f connFactory) New() (net.Conn, error) {
 
 // This example shows how you can implement RPC using cmd-stream-go.
 //
+// To do this, we implement the EchoService interface using commands.
+//
 // Here we have struct{} as the receiver, and examples.EchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)

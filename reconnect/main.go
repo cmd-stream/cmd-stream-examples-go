@@ -35,6 +35,8 @@ func (f connFactory) New() (conn net.Conn, err error) {
 // In this example, the client is trying to reconnect to the server when the
 // connection has been lost.
 //
+// To do this, we create the client using the cs_client.NewDefReconnect method.
+//
 // Here we have struct{} as the receiver, and examples.EchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
