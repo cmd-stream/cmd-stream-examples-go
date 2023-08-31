@@ -1,0 +1,140 @@
+package main
+
+import (
+	com "github.com/mus-format/common-go"
+	dts "github.com/mus-format/mus-stream-dts-go"
+	muss "github.com/mus-format/mus-stream-go"
+	"github.com/mus-format/mus-stream-go/varint"
+)
+
+// -----------------------------------------------------------------------------
+// DTM
+// -----------------------------------------------------------------------------
+
+const (
+	Eq1DTM com.DTM = iota
+	Eq2DTM
+	ResultDTM
+)
+
+// -----------------------------------------------------------------------------
+// Marshal/Unmarshal/Size functions
+// -----------------------------------------------------------------------------
+
+// Eq1CmdMUS
+
+func MarshalEq1CmdMUS(c Eq1Cmd, w muss.Writer) (n int, err error) {
+	n, err = varint.MarshalInt(c.a, w)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = varint.MarshalInt(c.b, w)
+	n += n1
+	if err != nil {
+		return
+	}
+	n1, err = varint.MarshalInt(c.c, w)
+	n += n1
+	return
+}
+
+func UnmarshalEq1CmdMUS(r muss.Reader) (c Eq1Cmd, n int, err error) {
+	c.a, n, err = varint.UnmarshalInt(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	c.b, n, err = varint.UnmarshalInt(r)
+	n += n1
+	if err != nil {
+		return
+	}
+	c.c, n, err = varint.UnmarshalInt(r)
+	n += n1
+	return
+}
+
+func SizeEq1CmdMUS(c Eq1Cmd) (size int) {
+	size = varint.SizeInt(c.a)
+	size += varint.SizeInt(c.b)
+	return size + varint.SizeInt(c.c)
+}
+
+// Eq2CmdMUS
+
+func MarshalEq2CmdMUS(c Eq2Cmd, w muss.Writer) (n int, err error) {
+	n, err = varint.MarshalInt(c.a, w)
+	if err != nil {
+		return
+	}
+	var n1 int
+	n1, err = varint.MarshalInt(c.b, w)
+	n += n1
+	if err != nil {
+		return
+	}
+	n1, err = varint.MarshalInt(c.c, w)
+	n += n1
+	return
+}
+
+func UnmarshalEq2CmdMUS(r muss.Reader) (c Eq2Cmd, n int, err error) {
+	c.a, n, err = varint.UnmarshalInt(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	c.b, n, err = varint.UnmarshalInt(r)
+	n += n1
+	if err != nil {
+		return
+	}
+	c.c, n, err = varint.UnmarshalInt(r)
+	n += n1
+	return
+}
+
+func SizeEq2CmdMUS(c Eq2Cmd) (size int) {
+	size = varint.SizeInt(c.a)
+	size += varint.SizeInt(c.b)
+	return size + varint.SizeInt(c.c)
+}
+
+// Result
+
+func MarshalResultMUS(result Result, w muss.Writer) (n int, err error) {
+	return varint.MarshalInt(int(result), w)
+}
+
+func UnmarshalResultMUS(r muss.Reader) (result Result, n int, err error) {
+	num, n, err := varint.UnmarshalInt(r)
+	result = Result(num)
+	return
+}
+
+func SizeResultMUS(result Result) (size int) {
+	return varint.SizeInt(int(result))
+}
+
+// -----------------------------------------------------------------------------
+// DTS
+// -----------------------------------------------------------------------------
+
+var Eq1DTS = dts.New[Eq1Cmd](Eq1DTM,
+	muss.MarshallerFn[Eq1Cmd](MarshalEq1CmdMUS),
+	muss.UnmarshallerFn[Eq1Cmd](UnmarshalEq1CmdMUS),
+	muss.SizerFn[Eq1Cmd](SizeEq1CmdMUS),
+)
+
+var Eq2DTS = dts.New[Eq2Cmd](Eq2DTM,
+	muss.MarshallerFn[Eq2Cmd](MarshalEq2CmdMUS),
+	muss.UnmarshallerFn[Eq2Cmd](UnmarshalEq2CmdMUS),
+	muss.SizerFn[Eq2Cmd](SizeEq2CmdMUS),
+)
+
+var ResultDTS = dts.New[Result](ResultDTM,
+	muss.MarshallerFn[Result](MarshalResultMUS),
+	muss.UnmarshallerFn[Result](UnmarshalResultMUS),
+	muss.SizerFn[Result](SizeResultMUS),
+)

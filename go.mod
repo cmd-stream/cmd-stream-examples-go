@@ -8,7 +8,8 @@ require (
 	github.com/cmd-stream/delegate-go v0.0.0-20230813163159-f99e433ebdab
 	github.com/cmd-stream/handler-go v0.0.0-20230813165508-2b99fa0791a9
 	github.com/cmd-stream/transport-go v0.0.0-20230813164805-8276dcb614a8
-	github.com/mus-format/common-go v0.0.0-20230710151318-833807f397c9
+	github.com/mus-format/common-go v0.0.0-20230828235912-098b21ff73ae
+	github.com/mus-format/mus-stream-dts-go v0.0.0-20230829003606-27751f04d0a6
 	github.com/mus-format/mus-stream-go v0.1.3
 	github.com/ymz-ncnk/assert v0.0.0-20230509152647-f867f3f54394
 )

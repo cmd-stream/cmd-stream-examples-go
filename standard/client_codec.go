@@ -1,31 +1,24 @@
 package main
 
 import (
+	"errors"
+
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
+	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
 type ClientCodec struct{}
 
 // Used by the client to send commands to the server.
-//
-// We have two kinds of commands, that's why we encode a command type, than a
-// command itself.
 func (c ClientCodec) Encode(cmd base.Cmd[Calculator], w transport.Writer) (
 	err error) {
+	// With help of type assertions, marshals a specific command.
 	switch c := cmd.(type) {
 	case Eq1Cmd:
-		_, err = MarshalCmdTypeMUS(Eq1CmdType, w)
-		if err != nil {
-			return
-		}
-		_, err = MarshalEq1CmdMUS(c, w)
+		_, err = Eq1DTS.MarshalMUS(c, w)
 	case Eq2Cmd:
-		_, err = MarshalCmdTypeMUS(Eq2CmdType, w)
-		if err != nil {
-			return
-		}
-		_, err = MarshalEq2CmdMUS(c, w)
+		_, err = Eq2DTS.MarshalMUS(c, w)
 	default:
 		panic("unexpected cmd type")
 	}
@@ -33,10 +26,19 @@ func (c ClientCodec) Encode(cmd base.Cmd[Calculator], w transport.Writer) (
 }
 
 // Used by the client to receive resulsts from the server.
-//
-// We have only one type of result.
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
-	result, _, err = UnmarshalResultMUS(r)
+	// Unmarshals dtm.
+	dtm, _, err := dts.UnmarshalDTMUS(r)
+	if err != nil {
+		return
+	}
+	// Depending on dtm, unmarshals a specific result.
+	switch dtm {
+	case ResultDTM:
+		result, _, err = ResultDTS.UnmarshalDataMUS(r)
+	default:
+		err = errors.New("unexpected result type")
+	}
 	return
 }
 

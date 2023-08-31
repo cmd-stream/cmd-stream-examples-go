@@ -1,41 +1,42 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
+	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
 type ServerCodec struct{}
 
 // Used by the server to send results to the client.
-//
-// We have only one type of result.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
-	_, err = MarshalOkResultMUS(result.(OkResult), w) // We have only one type of
-	// result.
+	// With help of type assertions, marshals a specific result.
+	switch rt := result.(type) {
+	case OkResult:
+		_, err = OkResultDTS.MarshalMUS(rt, w)
+	default:
+		err = ErrUnsupportedResultType
+	}
 	return
 }
 
 // Used by the server to receive commands from the client.
-//
-// We have two kinds of commands, that's why we decode a command type, than a
-// command itself.
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Printer],
 	err error) {
-	tp, _, err := UnmarshalCmdTypeMUS(r)
+	// Unmarshals dtm.
+	dtm, _, err := dts.UnmarshalDTMUS(r)
 	if err != nil {
 		return
 	}
-	switch tp {
-	case PrintCmdV1Type:
-		cmd, _, err = UnmarshalPrintCmdV1MUS(r)
-	case PrintCmdV2Type:
-		cmd, _, err = UnmarshalPrintCmdV2MUS(r)
+	// Depending on dtm, unmarshals a specific command.
+	switch dtm {
+	case PrintCmdV1DTM:
+		cmd, _, err = PrintCmdV1DTS.UnmarshalDataMUS(r)
+	case PrintCmdV2DTM:
+		cmd, _, err = PrintCmdV2DTS.UnmarshalDataMUS(r)
 	default:
-		err = errors.New("unexpected cmd type")
+		err = ErrUnsupportedCmdType
 	}
 	return
 }
