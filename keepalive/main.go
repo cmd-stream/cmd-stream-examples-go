@@ -25,7 +25,7 @@ const Addr = "127.0.0.1:9000"
 // In this example, the client is trying to keep alive the connection to the
 // server, when there are no commands to send.
 //
-// Here we have struct{} as the receiver, and examples.EchoCmd as a command.
+// Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)

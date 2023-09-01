@@ -19,7 +19,7 @@ const Addr = "127.0.0.1:9000"
 // In this example, we send one command and get several results. The client can
 // recognize the last result by the Result.LastOne method.
 //
-// Here we have struct{} as the receiver, and MultiEchoCmd as a command.
+// Here we have struct{} as the receiver and MultiEchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)

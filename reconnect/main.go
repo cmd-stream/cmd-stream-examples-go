@@ -37,7 +37,7 @@ func (f connFactory) New() (conn net.Conn, err error) {
 //
 // To do this, we create the client using the cs_client.NewDefReconnect method.
 //
-// Here we have struct{} as the receiver, and examples.EchoCmd as a command.
+// Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)

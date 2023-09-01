@@ -19,13 +19,12 @@ const Addr = "127.0.0.1:9000"
 // This example shows how you can use different versions of the same command,
 // for example, to support old clients.
 //
-// Here we have Printer as the receiver, and PrintCmdV1, PrintCmdV2 (current
-// version) as commands. The PrintCmdV1 command should encapsulate the
-// data migration, so it can use the receiver that supports only the current
-// version of the command.
+// With the new version of the command, the receiver usually changes so that the
+// old version is no longer compatible with it. To fix this, we must change the
+// Exec method of the old command - place data migration in it.
 //
-// The receiver can also perform the migration, for example, if it receives an
-// old version of the data from the database.
+// Here we have Printer as the receiver and PrintCmdV1 (old version),
+// PrintCmdV2 (current version) as commands.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)

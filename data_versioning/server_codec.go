@@ -8,7 +8,8 @@ import (
 
 type ServerCodec struct{}
 
-// Used by the server to send results to the client.
+// Encode is used by the server to send results to the client. If Encode fails
+// with an error, the server closes the connection.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
 	// With help of type assertions, marshals a specific result.
@@ -21,7 +22,8 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	return
 }
 
-// Used by the server to receive commands from the client.
+// Decode is used by the server to receive commands from the client. If Decode
+// fails with an error, the server closes the connection.
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Printer],
 	err error) {
 	// Unmarshals dtm.

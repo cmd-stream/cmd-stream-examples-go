@@ -32,7 +32,7 @@ const MaxCmdLength = 15
 // ClientCodec.Size method) before sending it. ServerCodec, in turn, works on
 // the server side and checks the size of each incoming command.
 //
-// Here we have struct{} as the receiver, and examples.EchoCmd as a command.
+// Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)

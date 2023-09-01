@@ -7,15 +7,16 @@ import (
 
 type ClientCodec struct{}
 
-// If the Encode method fails with an error, the Client.Send method will return
-// it.
+// Encode is used by the client to send commands to the server. If Encode fails
+// with an error, the Client.Send method will return it.
 func (c ClientCodec) Encode(cmd base.Cmd[struct{}], w transport.Writer) (
 	err error) {
 	_, err = MarshalEchoCmdMUS(cmd.(EchoCmd), w)
 	return
 }
 
-// If the Decode method fails with an error, the client will be closed.
+// Decode is used by the client to receive resulsts from the server. If Decode
+// fails with an error, the client will be closed.
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
 	cmd, _, err := UnmarshalEchoCmdMUS(r)
 	if err != nil {

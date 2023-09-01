@@ -31,7 +31,7 @@ const Addr = "127.0.0.1:9000"
 
 // This example shows how you can use cmd-stream-go with the TLS protocol.
 //
-// Here we have struct{} as the receiver, and examples.EchoCmd as a command.
+// Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
 	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
 	if err != nil {
