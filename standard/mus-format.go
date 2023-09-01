@@ -121,20 +121,20 @@ func SizeResultMUS(result Result) (size int) {
 // DTS
 // -----------------------------------------------------------------------------
 
-var Eq1DTS = dts.New[Eq1Cmd](Eq1DTM,
-	muss.MarshallerFn[Eq1Cmd](MarshalEq1CmdMUS),
-	muss.UnmarshallerFn[Eq1Cmd](UnmarshalEq1CmdMUS),
-	muss.SizerFn[Eq1Cmd](SizeEq1CmdMUS),
-)
-
-var Eq2DTS = dts.New[Eq2Cmd](Eq2DTM,
-	muss.MarshallerFn[Eq2Cmd](MarshalEq2CmdMUS),
-	muss.UnmarshallerFn[Eq2Cmd](UnmarshalEq2CmdMUS),
-	muss.SizerFn[Eq2Cmd](SizeEq2CmdMUS),
-)
-
-var ResultDTS = dts.New[Result](ResultDTM,
-	muss.MarshallerFn[Result](MarshalResultMUS),
-	muss.UnmarshallerFn[Result](UnmarshalResultMUS),
-	muss.SizerFn[Result](SizeResultMUS),
+var (
+	Eq1DTS = dts.New[Eq1Cmd](Eq1DTM,
+		muss.MarshallerFn[Eq1Cmd](MarshalEq1CmdMUS),
+		muss.UnmarshallerFn[Eq1Cmd](UnmarshalEq1CmdMUS),
+		muss.SizerFn[Eq1Cmd](SizeEq1CmdMUS),
+	)
+	Eq2DTS = dts.New[Eq2Cmd](Eq2DTM,
+		muss.MarshallerFn[Eq2Cmd](MarshalEq2CmdMUS),
+		muss.UnmarshallerFn[Eq2Cmd](UnmarshalEq2CmdMUS),
+		muss.SizerFn[Eq2Cmd](SizeEq2CmdMUS),
+	)
+	ResultDTS = dts.New[Result](ResultDTM,
+		muss.MarshallerFn[Result](MarshalResultMUS),
+		muss.UnmarshallerFn[Result](UnmarshalResultMUS),
+		muss.SizerFn[Result](SizeResultMUS),
+	)
 )

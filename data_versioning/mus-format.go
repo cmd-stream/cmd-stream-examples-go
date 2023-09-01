@@ -85,17 +85,17 @@ func SizeOkResultMUS(result OkResult) (size int) {
 // DTS
 // -----------------------------------------------------------------------------
 
-var PrintCmdV1DTS = dts.New[PrintCmdV1](PrintCmdV1DTM,
-	muss.MarshallerFn[PrintCmdV1](MarshalPrintCmdV1MUS),
-	muss.UnmarshallerFn[PrintCmdV1](UnmarshalPrintCmdV1MUS),
-	muss.SizerFn[PrintCmdV1](SizePrintCmdV1MUS))
-
-var PrintCmdV2DTS = dts.New[PrintCmdV2](PrintCmdV2DTM,
-	muss.MarshallerFn[PrintCmdV2](MarshalPrintCmdV2MUS),
-	muss.UnmarshallerFn[PrintCmdV2](UnmarshalPrintCmdV2MUS),
-	muss.SizerFn[PrintCmdV2](SizePrintCmdV2MUS))
-
-var OkResultDTS = dts.New[OkResult](OkResultDTM,
-	muss.MarshallerFn[OkResult](MarshalOkResultMUS),
-	muss.UnmarshallerFn[OkResult](UnmarshalOkResultMUS),
-	muss.SizerFn[OkResult](SizeOkResultMUS))
+var (
+	PrintCmdV1DTS = dts.New[PrintCmdV1](PrintCmdV1DTM,
+		muss.MarshallerFn[PrintCmdV1](MarshalPrintCmdV1MUS),
+		muss.UnmarshallerFn[PrintCmdV1](UnmarshalPrintCmdV1MUS),
+		muss.SizerFn[PrintCmdV1](SizePrintCmdV1MUS))
+	PrintCmdV2DTS = dts.New[PrintCmdV2](PrintCmdV2DTM,
+		muss.MarshallerFn[PrintCmdV2](MarshalPrintCmdV2MUS),
+		muss.UnmarshallerFn[PrintCmdV2](UnmarshalPrintCmdV2MUS),
+		muss.SizerFn[PrintCmdV2](SizePrintCmdV2MUS))
+	OkResultDTS = dts.New[OkResult](OkResultDTM,
+		muss.MarshallerFn[OkResult](MarshalOkResultMUS),
+		muss.UnmarshallerFn[OkResult](UnmarshalOkResultMUS),
+		muss.SizerFn[OkResult](SizeOkResultMUS))
+)
