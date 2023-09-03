@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	github.com/cmd-stream/base-go v0.0.0-20230813145615-dd6ac24c16f5
-	github.com/cmd-stream/cmd-stream-go v0.0.0-20230813171726-aedb7babeb4a
-	github.com/cmd-stream/delegate-go v0.0.0-20230813163159-f99e433ebdab
-	github.com/cmd-stream/handler-go v0.0.0-20230813165508-2b99fa0791a9
-	github.com/cmd-stream/transport-go v0.0.0-20230813164805-8276dcb614a8
+	github.com/cmd-stream/cmd-stream-go v0.0.0-20230903165413-065254c3e4d6
+	github.com/cmd-stream/delegate-go v0.0.0-20230903164603-5d986750fb84
+	github.com/cmd-stream/handler-go v0.0.0-20230903165022-51f2e6cd33f1
+	github.com/cmd-stream/transport-go v0.0.0-20230903164829-803729ab691f
 	github.com/mus-format/common-go v0.0.0-20230828235912-098b21ff73ae
 	github.com/mus-format/mus-stream-dts-go v0.0.0-20230829003606-27751f04d0a6
-	github.com/mus-format/mus-stream-go v0.1.3
+	github.com/mus-format/mus-stream-go v0.1.4
 	github.com/ymz-ncnk/assert v0.0.0-20230509152647-f867f3f54394
 )
 
