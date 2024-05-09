@@ -29,16 +29,16 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Calculator],
 	err error) {
 	// Unmarshals dtm.
-	dtm, _, err := dts.UnmarshalDTMUS(r)
+	dtm, _, err := dts.UnmarshalDTM(r)
 	if err != nil {
 		return
 	}
 	// Depending on dtm, unmarshals a specific command.
 	switch dtm {
 	case Eq1DTM:
-		cmd, _, err = Eq1DTS.UnmarshalDataMUS((r))
+		cmd, _, err = Eq1DTS.UnmarshalData((r))
 	case Eq2DTM:
-		cmd, _, err = Eq2DTS.UnmarshalDataMUS((r))
+		cmd, _, err = Eq2DTS.UnmarshalData((r))
 	default:
 		err = errors.New("unexpected cmd type")
 	}

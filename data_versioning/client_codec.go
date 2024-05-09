@@ -29,14 +29,14 @@ func (c ClientCodec) Encode(cmd base.Cmd[Printer], w transport.Writer) (
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result,
 	err error) {
 	// Unmarshals dtm.
-	dtm, _, err := dts.UnmarshalDTMUS(r)
+	dtm, _, err := dts.UnmarshalDTM(r)
 	if err != nil {
 		return
 	}
 	// Depending on dtm, unmarshals a specific result.
 	switch dtm {
 	case OkResultDTM:
-		result, _, err = OkResultDTS.UnmarshalDataMUS(r)
+		result, _, err = OkResultDTS.UnmarshalData(r)
 	default:
 		err = ErrUnsupportedResultType
 	}
