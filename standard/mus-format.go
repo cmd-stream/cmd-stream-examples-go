@@ -7,19 +7,11 @@ import (
 	"github.com/mus-format/mus-stream-go/varint"
 )
 
-// -----------------------------------------------------------------------------
-// DTM
-// -----------------------------------------------------------------------------
-
 const (
 	Eq1DTM com.DTM = iota
 	Eq2DTM
 	ResultDTM
 )
-
-// -----------------------------------------------------------------------------
-// Marshal/Unmarshal/Size functions
-// -----------------------------------------------------------------------------
 
 // Eq1CmdMUS
 
@@ -116,10 +108,6 @@ func UnmarshalResultMUS(r muss.Reader) (result Result, n int, err error) {
 func SizeResultMUS(result Result) (size int) {
 	return varint.SizeInt(int(result))
 }
-
-// -----------------------------------------------------------------------------
-// DTS
-// -----------------------------------------------------------------------------
 
 var (
 	Eq1DTS = dts.New[Eq1Cmd](Eq1DTM,

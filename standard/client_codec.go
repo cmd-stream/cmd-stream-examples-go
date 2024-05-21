@@ -11,7 +11,7 @@ import (
 type ClientCodec struct{}
 
 // Encode is used by the client to send commands to the server. If Encode fails
-// with an error, the Client.Send method will return it.
+// with an error, the Client.Send() method will return it.
 func (c ClientCodec) Encode(cmd base.Cmd[Calculator], w transport.Writer) (
 	err error) {
 	// With help of type assertions, marshals a specific command.

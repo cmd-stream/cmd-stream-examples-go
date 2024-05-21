@@ -7,7 +7,6 @@ import (
 	"github.com/cmd-stream/base-go"
 )
 
-// -----------------------------------------------------------------------------
 // Eq1Cmd represents an equation (a + b + c) which can be calculated on the
 // server. Note, that each command should implement the base.Cmd interface.
 type Eq1Cmd struct {
@@ -35,7 +34,6 @@ func (c Eq1Cmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	return proxy.Send(seq, result)
 }
 
-// -----------------------------------------------------------------------------
 // Eq2Cmd represents an equation (a - b - c) which can be calculated on the
 // server.
 type Eq2Cmd struct {
