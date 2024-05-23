@@ -19,13 +19,15 @@ func init() {
 
 const Addr = "127.0.0.1:9000"
 
-// This example demonstrates the standard usage of cmd-stream.
+// This example demonstrates the standard use of cmd-stream. The other files in
+// this package also have useful comments, so check them as well.
 //
 // Here we have Calculator as the receiver and Eq1Cmd, Eq2Cmd as commands.
 func main() {
 	// First of all let's create and run the server.
 	listener, err := net.Listen("tcp", Addr)
 	assert.EqualError(err, nil)
+	// Server will use Calculator to execute received commands.
 	server := cs_server.NewDef[Calculator](ServerCodec{}, Calculator{})
 	// Run the server.
 	wgS := &sync.WaitGroup{}
@@ -35,6 +37,9 @@ func main() {
 	// Than connect to the server and create the client.
 	conn, err := net.Dial("tcp", Addr)
 	assert.EqualError(err, nil)
+	// The last nil parameter corresponds to the UnexpectedResultHandler. In this
+	// case, unexpected results (if any) received from the server will be simply
+	// ignored.
 	client, err := cs_client.NewDef[Calculator](ClientCodec{}, conn, nil)
 	assert.EqualError(err, nil)
 
@@ -50,6 +55,8 @@ func main() {
 	// Finally let's close the client.
 	err = client.Close()
 	assert.EqualError(err, nil)
+	// The client receives results from the server in the background, so we have
+	// to wait for it to stop.
 	<-client.Done()
 
 	// And close the server.
