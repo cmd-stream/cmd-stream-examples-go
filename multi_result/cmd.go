@@ -28,15 +28,15 @@ func (c MultiEchoCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 }
 
 func MarshalMultiEchoCmdMUS(c MultiEchoCmd, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(string(c), w)
+	return ord.MarshalString(string(c), nil, w)
 }
 
 func UnmarshalMultiEchoCmdMUS(r muss.Reader) (c MultiEchoCmd, n int, err error) {
-	str, n, err := ord.UnmarshalString(r)
+	str, n, err := ord.UnmarshalString(nil, r)
 	c = MultiEchoCmd(str)
 	return
 }
 
 func SizeMultiEchoCmdMUS(c MultiEchoCmd) (size int) {
-	return ord.SizeString(string(c))
+	return ord.SizeString(string(c), nil)
 }

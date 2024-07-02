@@ -23,15 +23,15 @@ func (e EchoCmd) LastOne() bool {
 }
 
 func MarshalEchoCmdMUS(c EchoCmd, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(string(c), w)
+	return ord.MarshalString(string(c), nil, w)
 }
 
 func UnmarshalEchoCmdMUS(r muss.Reader) (c EchoCmd, n int, err error) {
-	str, n, err := ord.UnmarshalString(r)
+	str, n, err := ord.UnmarshalString(nil, r)
 	c = EchoCmd(str)
 	return
 }
 
 func SizeEchoCmdMUS(c EchoCmd) (size int) {
-	return ord.SizeString(string(c))
+	return ord.SizeString(string(c), nil)
 }

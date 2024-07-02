@@ -7,7 +7,7 @@ import (
 	"github.com/cmd-stream/base-go"
 	cs_client "github.com/cmd-stream/cmd-stream-go/client"
 	cs_server "github.com/cmd-stream/cmd-stream-go/server"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {

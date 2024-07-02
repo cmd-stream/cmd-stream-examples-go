@@ -10,7 +10,7 @@ import (
 	cs_server "github.com/cmd-stream/cmd-stream-go/server"
 	delegate "github.com/cmd-stream/delegate-go"
 	transport_client "github.com/cmd-stream/transport-go/client"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {

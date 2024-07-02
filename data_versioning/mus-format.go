@@ -24,45 +24,45 @@ const (
 // PrintCmdV1
 
 func MarshalPrintCmdV1MUS(c PrintCmdV1, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(c.text, w)
+	return ord.MarshalString(c.text, nil, w)
 }
 
 func UnmarshalPrintCmdV1MUS(r muss.Reader) (c PrintCmdV1, n int, err error) {
-	c.text, n, err = ord.UnmarshalString(r)
+	c.text, n, err = ord.UnmarshalString(nil, r)
 	return
 }
 
 func SizePrintCmdV1MUS(c PrintCmdV1) (size int) {
-	return ord.SizeString(c.text)
+	return ord.SizeString(c.text, nil)
 }
 
 // PrintCmdV2
 
 func MarshalPrintCmdV2MUS(c PrintCmdV2, w muss.Writer) (n int, err error) {
-	n, err = ord.MarshalString(c.from, w)
+	n, err = ord.MarshalString(c.from, nil, w)
 	if err != nil {
 		return
 	}
 	var n1 int
-	n1, err = ord.MarshalString(c.text, w)
+	n1, err = ord.MarshalString(c.text, nil, w)
 	n += n1
 	return
 }
 
 func UnmarshalPrintCmdV2MUS(r muss.Reader) (c PrintCmdV2, n int, err error) {
-	c.from, n, err = ord.UnmarshalString(r)
+	c.from, n, err = ord.UnmarshalString(nil, r)
 	if err != nil {
 		return
 	}
 	var n1 int
-	c.text, n1, err = ord.UnmarshalString(r)
+	c.text, n1, err = ord.UnmarshalString(nil, r)
 	n += n1
 	return
 }
 
 func SizePrintCmdV2MUS(c PrintCmdV2) (size int) {
-	size = ord.SizeString(c.from)
-	return size + ord.SizeString(c.text)
+	size = ord.SizeString(c.from, nil)
+	return size + ord.SizeString(c.text, nil)
 }
 
 // OkResult

@@ -31,7 +31,7 @@ func UnmarshalValidEchoCmdMUS(r muss.Reader) (c examples.EchoCmd, n int,
 		}
 		return
 	}
-	str, n, err := ord.UnmarshalValidString(maxLength, false, r)
+	str, n, err := ord.UnmarshalValidString(nil, maxLength, false, r)
 	c = examples.EchoCmd(str)
 	return
 }

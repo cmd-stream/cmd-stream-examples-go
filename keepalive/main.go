@@ -13,7 +13,7 @@ import (
 	delegate "github.com/cmd-stream/delegate-go"
 	delegate_client "github.com/cmd-stream/delegate-go/client"
 	"github.com/cmd-stream/handler-go"
-	"github.com/ymz-ncnk/assert"
+	assert "github.com/ymz-ncnk/assert/panic"
 )
 
 func init() {
