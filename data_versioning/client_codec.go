@@ -15,9 +15,9 @@ func (c ClientCodec) Encode(cmd base.Cmd[Printer], w transport.Writer) (
 	// With help of type assertions, marshals a specific command.
 	switch c := cmd.(type) {
 	case PrintCmdV1:
-		_, err = PrintCmdV1DTS.MarshalMUS(c, w)
+		_, err = PrintCmdV1DTS.Marshal(c, w)
 	case PrintCmdV2:
-		_, err = PrintCmdV2DTS.MarshalMUS(c, w)
+		_, err = PrintCmdV2DTS.Marshal(c, w)
 	default:
 		err = ErrUnsupportedCmdType
 	}

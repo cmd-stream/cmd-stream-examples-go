@@ -15,7 +15,7 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	// With help of type assertions, marshals a specific result.
 	switch rt := result.(type) {
 	case OkResult:
-		_, err = OkResultDTS.MarshalMUS(rt, w)
+		_, err = OkResultDTS.Marshal(rt, w)
 	default:
 		err = ErrUnsupportedResultType
 	}

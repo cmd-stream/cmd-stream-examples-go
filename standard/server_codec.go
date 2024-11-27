@@ -17,7 +17,7 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	// With help of type assertions, marshals a specific result.
 	switch rt := result.(type) {
 	case Result:
-		_, err = ResultDTS.MarshalMUS(rt, w)
+		_, err = ResultDTS.Marshal(rt, w)
 	default:
 		err = errors.New("unexpected result type")
 	}

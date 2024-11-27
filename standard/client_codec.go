@@ -17,9 +17,9 @@ func (c ClientCodec) Encode(cmd base.Cmd[Calculator], w transport.Writer) (
 	// With help of type assertions, marshals a specific command.
 	switch c := cmd.(type) {
 	case Eq1Cmd:
-		_, err = Eq1DTS.MarshalMUS(c, w)
+		_, err = Eq1DTS.Marshal(c, w)
 	case Eq2Cmd:
-		_, err = Eq2DTS.MarshalMUS(c, w)
+		_, err = Eq2DTS.Marshal(c, w)
 	default:
 		panic("unexpected cmd type")
 	}
