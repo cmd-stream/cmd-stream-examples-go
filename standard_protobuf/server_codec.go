@@ -15,17 +15,11 @@ type ServerCodec struct{}
 // with an error, the server closes the connection.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
-	// With help of type assertions, marshals a specific result.
-	//
-	// Instead of this switch generic MarshalMUS() function can be used, see
-	// https://github.com/mus-format/mus-go?tab=readme-ov-file#generic-marshalmus-function
-	// for more details.
-	switch rt := result.(type) {
-	case Result:
-		_, err = ResultDTS.Marshal(rt, w)
-	default:
-		err = errors.New("unexpected result type")
+	m, ok := result.(MarshallerProtobuf)
+	if !ok {
+		return errors.New("result doesn't implement MarshallerProtobuf interface")
 	}
+	_, err = m.MarshalProtobuf(w)
 	return
 }
 

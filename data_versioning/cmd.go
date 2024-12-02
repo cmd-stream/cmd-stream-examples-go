@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/cmd-stream/base-go"
+	muss "github.com/mus-format/mus-stream-go"
 )
 
 // -----------------------------------------------------------------------------
@@ -22,6 +23,10 @@ func (c PrintCmdV1) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	return proxy.Send(seq, OkResult(true))
 }
 
+func (c PrintCmdV1) MarshalMUS(w muss.Writer) (n int, err error) {
+	return PrintCmdV1DTS.Marshal(c, w)
+}
+
 // -----------------------------------------------------------------------------
 
 type PrintCmdV2 struct {
@@ -35,4 +40,8 @@ func (c PrintCmdV2) Exec(ctx context.Context, at time.Time, seq base.Seq,
 ) error {
 	receiver.Print(c.from, c.text)
 	return proxy.Send(seq, OkResult(true))
+}
+
+func (c PrintCmdV2) MarshalMUS(w muss.Writer) (n int, err error) {
+	return PrintCmdV2DTS.Marshal(c, w)
 }

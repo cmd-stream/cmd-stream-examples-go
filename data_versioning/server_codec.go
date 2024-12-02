@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
 	dts "github.com/mus-format/mus-stream-dts-go"
@@ -12,13 +14,11 @@ type ServerCodec struct{}
 // with an error, the server closes the connection.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
-	// With help of type assertions, marshals a specific result.
-	switch rt := result.(type) {
-	case OkResult:
-		_, err = OkResultDTS.Marshal(rt, w)
-	default:
-		err = ErrUnsupportedResultType
+	m, ok := result.(MarshallerMUS)
+	if !ok {
+		return errors.New("cmd doesn't implement MarshallerMUS interface")
 	}
+	_, err = m.MarshalMUS(w)
 	return
 }
 

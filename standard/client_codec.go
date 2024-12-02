@@ -14,19 +14,11 @@ type ClientCodec struct{}
 // with an error, the Client.Send() method will return it.
 func (c ClientCodec) Encode(cmd base.Cmd[Calculator], w transport.Writer) (
 	err error) {
-	// With help of type assertions, marshals a specific command.
-	//
-	// Instead of this switch generic MarshalMUS() function can be used, see
-	// https://github.com/mus-format/mus-go?tab=readme-ov-file#generic-marshalmus-function
-	// for more details.
-	switch c := cmd.(type) {
-	case Eq1Cmd:
-		_, err = Eq1DTS.Marshal(c, w)
-	case Eq2Cmd:
-		_, err = Eq2DTS.Marshal(c, w)
-	default:
-		panic("unexpected cmd type")
+	m, ok := cmd.(MarshallerMUS)
+	if !ok {
+		return errors.New("cmd doesn't implement MarshallerMUS interface")
 	}
+	_, err = m.MarshalMUS(w)
 	return
 }
 

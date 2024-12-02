@@ -1,5 +1,7 @@
 package main
 
+import muss "github.com/mus-format/mus-stream-go"
+
 func NewResult(r int64) Result {
 	return Result{ResultData: &ResultData{R: r}}
 }
@@ -16,4 +18,8 @@ func (r Result) Equal(ar Result) bool {
 
 func (r Result) LastOne() bool {
 	return true
+}
+
+func (r Result) MarshalProtobuf(w muss.Writer) (n int, err error) {
+	return ResultDTS.Marshal(r, w)
 }

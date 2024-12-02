@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/cmd-stream/base-go"
+	muss "github.com/mus-format/mus-stream-go"
 )
 
 func NewEq1Cmd(a, b, c int64) Eq1Cmd {
@@ -13,6 +14,7 @@ func NewEq1Cmd(a, b, c int64) Eq1Cmd {
 
 // Eq1Cmd represents an equation (a + b + c) which can be calculated on the
 // server. Note, that each command should implement the base.Cmd interface.
+// Also it implements the MarshallerMUS interface.
 type Eq1Cmd struct {
 	*Eq1Data
 }
@@ -41,12 +43,16 @@ func (c Eq1Cmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	return proxy.Send(seq, result)
 }
 
+func (c Eq1Cmd) MarshalProtobuf(w muss.Writer) (n int, err error) {
+	return Eq1DTS.Marshal(c, w)
+}
+
 func NewEq2Cmd(a, b, c int64) Eq2Cmd {
 	return Eq2Cmd{&Eq2Data{A: a, B: b, C: c}}
 }
 
 // Eq2Cmd represents an equation (a - b - c) which can be calculated on the
-// server.
+// server. It implements the MarshallerMUS interface.
 type Eq2Cmd struct {
 	*Eq2Data
 }
@@ -61,4 +67,8 @@ func (c Eq2Cmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 		},
 	}
 	return proxy.Send(seq, result)
+}
+
+func (c Eq2Cmd) MarshalProtobuf(w muss.Writer) (n int, err error) {
+	return Eq2DTS.Marshal(c, w)
 }
