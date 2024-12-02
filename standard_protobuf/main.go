@@ -79,13 +79,19 @@ func runServer(wg *sync.WaitGroup, listener net.Listener,
 func sendCmd(wg *sync.WaitGroup, client *base_client.Client[Calculator]) {
 	defer wg.Done()
 	var (
-		cmd     = NewEq2Cmd(10, 2, 3)
-		want    = NewResult(5)
-		results = make(chan base.AsyncResult, 1)
+		cmd          = NewEq2Cmd(10, 2, 3)
+		want         = NewResult(5)
+		asyncResults = make(chan base.AsyncResult, 1)
 	)
-	_, err := client.Send(cmd, results)
+	_, err := client.Send(cmd, asyncResults)
 	assert.EqualError(err, nil)
-	result := (<-results).Result.(Result)
+
+	asyncResult := <-asyncResults
+	// asyncResult.Error != nil if something is wrong with the connection.
+	assert.EqualError(asyncResult.Error, nil)
+	// The result sent by the command.
+	result := asyncResult.Result.(Result)
+
 	if !result.Equal(want) {
 		panic(fmt.Sprintf("unexpected result, want %v actual %v", want, result))
 	}
@@ -108,7 +114,12 @@ func sendCmdWithTimeout(wg *sync.WaitGroup,
 		client.Forget(seq) // If we are no longer interested in the results of
 		// this command, we should call Forget().
 	case asyncResult := <-results:
+
+		// asyncResult.Error != nil if something is wrong with the connection.
+		assert.EqualError(asyncResult.Error, nil)
+		// The result sent by the command.
 		result := asyncResult.Result.(Result)
+
 		if !result.Equal(want) {
 			panic(fmt.Sprintf("unexpected result, want %v actual %v", want, result))
 		}

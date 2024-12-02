@@ -77,11 +77,14 @@ func sendCmd(wg *sync.WaitGroup, client *base_client.Client[Calculator]) {
 	var (
 		cmd            = Eq2Cmd{10, 2, 3}
 		expectedResult = Result(5)
-		results        = make(chan base.AsyncResult, 1)
+		asyncResults   = make(chan base.AsyncResult, 1)
 	)
-	_, err := client.Send(cmd, results)
+	_, err := client.Send(cmd, asyncResults)
 	assert.EqualError(err, nil)
-	result := (<-results).Result.(Result)
+	asyncResult := <-asyncResults
+	// asyncResult.Error != nil if something is wrong with the connection.
+	assert.EqualError(asyncResult.Error, nil)
+	result := asyncResult.Result.(Result)
 	assert.Equal(result, expectedResult)
 }
 
@@ -102,6 +105,8 @@ func sendCmdWithTimeout(wg *sync.WaitGroup,
 		client.Forget(seq) // If we are no longer interested in the results of
 		// this command, we should call Forget().
 	case asyncResult := <-results:
+		// asyncResult.Error != nil if something is wrong with the connection.
+		assert.EqualError(asyncResult.Error, nil)
 		result := asyncResult.Result.(Result)
 		assert.Equal(result, expectedResult)
 	}
