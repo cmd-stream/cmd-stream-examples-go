@@ -8,6 +8,7 @@ import (
 	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
+// One ServerCodec will be used by all server Workers, so it must be thread-safe.
 type ServerCodec struct{}
 
 // Encode is used by the server to send results to the client. If Encode fails
