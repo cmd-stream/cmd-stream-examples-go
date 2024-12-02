@@ -54,9 +54,9 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 func (c ClientCodec) Size(cmd base.Cmd[Calculator]) (size int) {
 	switch c := cmd.(type) {
 	case Eq1Cmd:
-		size = SizeEq1CmdMUS(c)
+		size = Eq1DTS.Size(c)
 	case Eq2Cmd:
-		size = SizeEq2CmdMUS(c)
+		size = Eq2DTS.Size(c)
 	default:
 		panic("unexpected cmd type")
 	}

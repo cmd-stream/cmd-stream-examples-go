@@ -8,6 +8,8 @@ github.com/cmd-stream/handler-go v0.0.0-20241126234032-6b9e57a2e810 h1:wnhBL9n0B
 github.com/cmd-stream/handler-go v0.0.0-20241126234032-6b9e57a2e810/go.mod h1:xcV6SNpVTD+axEdwQQVCmwW7/lGbTq1lqnznn3milkc=
 github.com/cmd-stream/transport-go v0.0.0-20241126234001-8b4a67342593 h1:iIuejYtjeu9LfDE8Q6EK7dFS4Y9Qbtd6ERcfR67DyKI=
 github.com/cmd-stream/transport-go v0.0.0-20241126234001-8b4a67342593/go.mod h1:vlGgTV3/TsdJY8LrEfy9A0+ZrOY6bFXu4tTg0bClmIo=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/mus-format/common-go v0.0.0-20240704141923-ea7d12c7eed3 h1:lq6NjZLxX27LghMjyTAZvt3c7Hi82VbhSuyTw3iYIDU=
 github.com/mus-format/common-go v0.0.0-20240704141923-ea7d12c7eed3/go.mod h1:1hTb8w0YdSGIOU6wNY+e9uXnDZ9OQnUivNtd8cPSdoU=
 github.com/mus-format/mus-stream-dts-go v0.5.0 h1:dYxwBSrHzjQr+NAuAqc2ZCZvIryOJSrXiZ3N29h7o4k=
@@ -24,3 +26,5 @@ github.com/ymz-ncnk/multierr-go v0.0.0-20230813140901-5e9302c2e02a h1:mh9cOvtFJM
 github.com/ymz-ncnk/multierr-go v0.0.0-20230813140901-5e9302c2e02a/go.mod h1:Y6DG+DHn9auZ/pemU4IxVvs+54GGhTpcBgaOHIGRiAk=
 golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 h1:yixxcjnhBmY0nkL253HFVIm0JsFHwrHdT3Yh6szTnfY=
 golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8/go.mod h1:jj3sYF3dwk5D+ghuXyeI3r5MFf+NT2An6/9dOA95KSI=
+google.golang.org/protobuf v1.35.2 h1:8Ar7bF+apOIoThw1EdZl0p1oWvMqTHmpA2fRTyZO8io=
+google.golang.org/protobuf v1.35.2/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=

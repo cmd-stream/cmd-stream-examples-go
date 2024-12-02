@@ -1,8 +1,10 @@
 # cmd-stream-examples-go
 Contains several examples of using [cmd-stream-go](https://github.com/cmd-stream/cmd-stream-go)
-with the [mus-stream-go](https://github.com/mus-format/mus-stream-go) 
-serializer (each package is one example):
-- standard - demonstrates the standard use of cmd-stream-go.
+(each package is one example):
+- standard - demonstrates the standard use of cmd-stream-go with 
+  [mus-stream-go](https://github.com/mus-format/mus-stream-go) serializer.
+- standard_protobuf - demonstrates the standard use of cmd-stream-go with 
+  Protobuf serializer.
 - rpc - shows how cmd-stream-go can be used to implement RPC.
 - multi_result - demonstrates an example where the command returns multiple 
   results.

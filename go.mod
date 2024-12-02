@@ -1,6 +1,8 @@
 module github.com/cmd-stream/cmd-stream-examples-go
 
-go 1.20
+go 1.21
+
+toolchain go1.23.3
 
 require (
 	github.com/cmd-stream/base-go v0.0.0-20241126232756-979c1388a1d8
@@ -12,6 +14,7 @@ require (
 	github.com/mus-format/mus-stream-dts-go v0.5.0
 	github.com/mus-format/mus-stream-go v0.4.1
 	github.com/ymz-ncnk/assert v0.0.0-20240429131311-eb772ccdb3e2
+	google.golang.org/protobuf v1.35.2
 )
 
 require (
