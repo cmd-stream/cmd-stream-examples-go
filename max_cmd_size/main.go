@@ -7,9 +7,8 @@ import (
 	"github.com/cmd-stream/base-go"
 	base_server "github.com/cmd-stream/base-go/server"
 	examples "github.com/cmd-stream/cmd-stream-examples-go"
-	cs_client "github.com/cmd-stream/cmd-stream-go/client"
 	cs_server "github.com/cmd-stream/cmd-stream-go/server"
-	"github.com/cmd-stream/delegate-go"
+	delegate_server "github.com/cmd-stream/delegate-go"
 	transport_client "github.com/cmd-stream/transport-go/client"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
@@ -18,42 +17,27 @@ func init() {
 	assert.On = true
 }
 
-const Addr = "127.0.0.1:9000"
-
-// MaxCmdLength defines a maximum command length in bytes supported by the
-// server.
-const MaxCmdLength = 15
+// Defines a maximum command size in bytes supported by the server.
+const MaxCmdSize = 15
 
 // In this example, we set a limit on the maximum command size supported by the
 // server.
 //
-// To do this, we use ServerSettings and ServerCodec. The client receives
-// ServerSettings from the server when the connection is initialized, and if
-// ServerSettings.MaxCmdSize != 0, it will check the command size (using the
-// ClientCodec.Size method) before sending it. ServerCodec, in turn, works on
-// the server side and checks the size of each incoming command.
+// This is achieved by configuring the server with
+// delegate_server.ServerSettings.MaxCmdSize != 0
+// and by checking the command size in ServerCodec.Decode() method.
 //
 // Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
-	// First of all let's create and run the server.
-	listener, err := net.Listen("tcp", Addr)
-	assert.EqualError(err, nil)
-	settings := delegate.ServerSettings{MaxCmdSize: MaxCmdLength} // Sets a limit
-	// Server will use Calculator to execute received commands.
-	server := cs_server.New[struct{}](cs_server.DefServerInfo, settings,
-		cs_server.DefConf, ServerCodec{}, struct{}{}, nil)
-	// Run the server.
-	wgS := &sync.WaitGroup{}
-	wgS.Add(1)
-	go runServer(wgS, listener, server)
+	const addr = "127.0.0.1:9000"
 
-	// Than connect to the server and create the client.
-	conn, err := net.Dial("tcp", Addr)
+	// Start the server.
+	wgS := &sync.WaitGroup{}
+	server, err := StartServer(addr, ServerCodec{}, struct{}{}, wgS)
 	assert.EqualError(err, nil)
-	// The last nil parameter corresponds to the UnexpectedResultHandler. In this
-	// case, unexpected results (if any) received from the server will be simply
-	// ignored.
-	client, err := cs_client.NewDef[struct{}](examples.ClientCodec{}, conn, nil)
+
+	// Create the client.
+	client, err := examples.CreateClient(addr, examples.ClientCodec{})
 	assert.EqualError(err, nil)
 
 	// Send too large command.
@@ -64,22 +48,30 @@ func main() {
 	_, err = client.Send(cmd, results)
 	assert.EqualError(err, transport_client.ErrTooLargeCmd)
 
-	// Finally let's close the client.
-	err = client.Close()
+	// Close the client.
+	err = examples.CloseClient(client)
 	assert.EqualError(err, nil)
-	// The client receives results from the server in the background, so we have
-	// to wait for it to stop.
-	<-client.Done()
 
-	// And close the server.
-	err = server.Close()
+	// Close the server.
+	err = examples.CloseServer(server, wgS)
 	assert.EqualError(err, nil)
-	wgS.Wait()
 }
 
-func runServer(wg *sync.WaitGroup, listener net.Listener,
-	server *base_server.Server) {
-	defer wg.Done()
-	err := server.Serve(listener.(*net.TCPListener))
-	assert.EqualError(err, base_server.ErrClosed)
+func StartServer[T any](addr string, codec cs_server.Codec[T],
+	receiver T, wg *sync.WaitGroup) (s *base_server.Server, err error) {
+	l, err := net.Listen("tcp", addr)
+	assert.EqualError(err, nil)
+
+	settings := delegate_server.ServerSettings{MaxCmdSize: MaxCmdSize} // Defines a limit
+	s = cs_server.New[struct{}](cs_server.DefServerInfo, settings,
+		cs_server.DefConf, ServerCodec{}, struct{}{}, nil)
+
+	wg.Add(1)
+	go func(wg *sync.WaitGroup, listener net.Listener,
+		server *base_server.Server) {
+		defer wg.Done()
+		err := server.Serve(listener.(*net.TCPListener))
+		assert.EqualError(err, base_server.ErrClosed)
+	}(wg, l, s)
+	return
 }

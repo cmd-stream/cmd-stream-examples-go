@@ -26,7 +26,7 @@ func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[struct{}],
 func UnmarshalValidEchoCmdMUS(r muss.Reader) (c examples.EchoCmd, n int,
 	err error) {
 	var maxLength com.ValidatorFn[int] = func(length int) (err error) {
-		if length > MaxCmdLength {
+		if length > MaxCmdSize {
 			err = errors.New("command is too big")
 		}
 		return

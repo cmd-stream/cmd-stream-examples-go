@@ -1,12 +1,10 @@
 package main
 
 import (
-	"net"
 	"sync"
 
 	"github.com/cmd-stream/base-go"
-	cs_client "github.com/cmd-stream/cmd-stream-go/client"
-	cs_server "github.com/cmd-stream/cmd-stream-go/server"
+	examples "github.com/cmd-stream/cmd-stream-examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -14,58 +12,29 @@ func init() {
 	assert.On = true
 }
 
-const Addr = "127.0.0.1:9000"
-
-// This example shows how you can use different versions of the same command,
-// for example, to support old clients.
+// This example shows how the server can handle different versions of a command.
 //
-// With the new version of the command, the receiver usually changes so that the
-// old version is no longer compatible with it. To fix this, we must change the
-// Exec method of the old command - place data migration in it.
+// Changes of the receiver required to support a new version of the command may
+// break backward compatibility. In this case, we need to adapt old command
+// versions (only on the server) to the new realities, since there is only one
+// receiver on the server.
 //
-// Here we have Printer as the receiver and PrintCmdV1 (old version),
+// Here we have Printer as the receiver, PrintCmdV1 (old adapted version) and
 // PrintCmdV2 (current version) as commands.
 func main() {
-	listener, err := net.Listen("tcp", Addr)
-	assert.EqualError(err, nil)
+	const addr = "127.0.0.1:9000"
 
 	// Start the server.
-	var (
-		wgS    = &sync.WaitGroup{}
-		server = cs_server.NewDef[Printer](ServerCodec{}, Printer{})
-	)
-	wgS.Add(1)
-	go func() {
-		defer wgS.Done()
-		server.Serve(listener.(*net.TCPListener))
-	}()
-
-	// Stop the server.
-	defer func() {
-		err := server.Close()
-		assert.EqualError(err, nil)
-		wgS.Wait()
-	}()
-
-	// Connect to the server.
-	conn, err := net.Dial("tcp", Addr)
+	wgS := &sync.WaitGroup{}
+	server, err := examples.StartServer(addr, ServerCodec{}, Printer{}, wgS)
 	assert.EqualError(err, nil)
 
 	// Create the client.
-	client, err := cs_client.NewDef[Printer](ClientCodec{}, conn, nil)
+	client, err := examples.CreateClient(addr, ClientCodec{})
 	assert.EqualError(err, nil)
 
-	// Stop the client.
-	defer func() {
-		err := client.Close()
-		assert.EqualError(err, nil)
-		// Wait for the client to stop.
-		<-client.Done()
-	}()
-
-	wgR := &sync.WaitGroup{}
-
 	// Send the old version of the command.
+	wgR := &sync.WaitGroup{}
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
@@ -93,6 +62,13 @@ func main() {
 		result := (<-results).Result.(OkResult)
 		assert.Equal[OkResult](result, OkResult(true))
 	}()
-
 	wgR.Wait()
+
+	// Close the client.
+	err = examples.CloseClient(client)
+	assert.EqualError(err, nil)
+
+	// Close the server.
+	err = examples.CloseServer(server, wgS)
+	assert.EqualError(err, nil)
 }

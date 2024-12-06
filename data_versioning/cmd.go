@@ -18,7 +18,7 @@ func (c PrintCmdV1) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	receiver Printer,
 	proxy base.Proxy,
 ) error {
-	// From now, PrintCmdV1 should perform data migration to use Printer.
+	// PrintCmdV1 is adapted to work with the new receiver.
 	receiver.Print("undefined", c.text)
 	return proxy.Send(seq, OkResult(true))
 }

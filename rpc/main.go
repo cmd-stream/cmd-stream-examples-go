@@ -2,12 +2,9 @@ package main
 
 import (
 	"context"
-	"net"
 	"sync"
 
 	examples "github.com/cmd-stream/cmd-stream-examples-go"
-	cs_client "github.com/cmd-stream/cmd-stream-go/client"
-	cs_server "github.com/cmd-stream/cmd-stream-go/server"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -15,61 +12,38 @@ func init() {
 	assert.On = true
 }
 
-const Addr = "127.0.0.1:9000"
-
-type connFactory struct{}
-
-func (f connFactory) New() (net.Conn, error) {
-	return net.Dial("tcp", Addr)
-}
-
-// This example shows how you can implement RPC using cmd-stream-go.
+// This example shows how RPC can be implemented using cmd-stream-go.
 //
-// To do this, we implement the EchoService interface using commands.
+// It initialize EchoService with the cmd-stream-go client and then makes an RPC
+// call - EchoService.Echo().
 //
 // Here we have struct{} as the receiver and examples.EchoCmd as a command.
 func main() {
-	listener, err := net.Listen("tcp", Addr)
-	if err != nil {
-		return
-	}
+	const addr = "127.0.0.1:9000"
 
 	// Start the server.
-	var (
-		wgS    = &sync.WaitGroup{}
-		server = cs_server.NewDef[struct{}](examples.ServerCodec{}, struct{}{})
-	)
-	wgS.Add(1)
-	go func() {
-		defer wgS.Done()
-		server.Serve(listener.(*net.TCPListener))
-	}()
-
-	// Stop the server.
-	defer func() {
-		err := server.Close()
-		assert.EqualError(err, nil)
-		wgS.Wait()
-	}()
-
-	// Create the client.
-	client, err := cs_client.NewDefReconnect[struct{}](examples.ClientCodec{},
-		connFactory{},
-		nil)
+	wgS := &sync.WaitGroup{}
+	server, err := examples.StartServer(addr, examples.ServerCodec{}, struct{}{},
+		wgS)
 	assert.EqualError(err, nil)
 
-	// Stop the client.
-	defer func() {
-		err := client.Close()
-		assert.EqualError(err, nil)
-		// Wait for the client to stop.
-		<-client.Done()
-	}()
+	// Create the client.
+	client, err := examples.CreateClient(addr, examples.ClientCodec{})
+	assert.EqualError(err, nil)
 
-	// Use the service.
+	// Create the service.
 	service := EchoServiceImpl{client}
 
+	// Make an RPC call.
 	str, err := service.Echo(context.Background(), "hello world")
 	assert.EqualError(err, nil)
 	assert.Equal[string](str, "hello world")
+
+	// Close the client.
+	err = examples.CloseClient(client)
+	assert.EqualError(err, nil)
+
+	// Close the server.
+	err = examples.CloseServer(server, wgS)
+	assert.Equal(err, nil)
 }
