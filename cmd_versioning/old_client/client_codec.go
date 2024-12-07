@@ -1,4 +1,4 @@
-package main
+package old_client
 
 import (
 	"errors"
@@ -45,13 +45,5 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result,
 // restrictions on the command size, the client will use this method to
 // check it before sending.
 func (c ClientCodec) Size(cmd base.Cmd[Printer]) (size int) {
-	switch c := cmd.(type) {
-	case PrintCmdV1:
-		size = SizePrintCmdV1MUS(c)
-	case PrintCmdV2:
-		size = SizePrintCmdV2MUS(c)
-	default:
-		panic("unexpected cmd type")
-	}
-	return
+	return SizePrintCmdV1MUS(cmd.(PrintCmd))
 }

@@ -34,9 +34,14 @@ func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Printer],
 	// Depending on dtm, unmarshals a specific command.
 	switch dtm {
 	case PrintCmdV1DTM:
-		cmd, _, err = PrintCmdV1DTS.UnmarshalData(r)
-	case PrintCmdV2DTM:
-		cmd, _, err = PrintCmdV2DTS.UnmarshalData(r)
+		var cmdV1 PrintCmdV1
+		cmdV1, _, err = PrintCmdV1DTS.UnmarshalData(r)
+		if err != nil {
+			return
+		}
+		cmd = migrateV1(cmdV1)
+	case PrintCmdDTM:
+		cmd, _, err = PrintCmdDTS.UnmarshalData(r)
 	default:
 		err = ErrUnsupportedCmdType
 	}

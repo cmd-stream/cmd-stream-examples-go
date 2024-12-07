@@ -12,8 +12,8 @@ Contains several examples of using [cmd-stream-go](https://github.com/cmd-stream
 - reconnect - demonstrates the reconnect feature.
 - max_cmd_size - shows how to set the maximum command size supported by the 
   server.
-- data_versioning - shows how to use different versions of the same command, for
-  example, to support old clients.
+- cmd_versioning - shows how the server can handle different versions of the 
+  same command, for example, to support old clients.
 - tls - cmd-stream-go + TLS.
 
 More information can be found in the corresponding `main.go` files.

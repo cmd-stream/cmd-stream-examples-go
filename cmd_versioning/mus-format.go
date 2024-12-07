@@ -13,7 +13,7 @@ import (
 
 const (
 	PrintCmdV1DTM com.DTM = iota
-	PrintCmdV2DTM
+	PrintCmdDTM
 	OkResultDTM
 )
 
@@ -24,52 +24,52 @@ const (
 // PrintCmdV1
 
 func MarshalPrintCmdV1MUS(c PrintCmdV1, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(c.text, nil, w)
+	return ord.MarshalString(c.Text, nil, w)
 }
 
 func UnmarshalPrintCmdV1MUS(r muss.Reader) (c PrintCmdV1, n int, err error) {
-	c.text, n, err = ord.UnmarshalString(nil, r)
+	c.Text, n, err = ord.UnmarshalString(nil, r)
 	return
 }
 
 func SizePrintCmdV1MUS(c PrintCmdV1) (size int) {
-	return ord.SizeString(c.text, nil)
+	return ord.SizeString(c.Text, nil)
 }
 
 func SkipPtrintCmdV1MUS(r muss.Reader) (n int, err error) {
 	return ord.SkipString(nil, r)
 }
 
-// PrintCmdV2
+// PrintCmd
 
-func MarshalPrintCmdV2MUS(c PrintCmdV2, w muss.Writer) (n int, err error) {
-	n, err = ord.MarshalString(c.from, nil, w)
+func MarshalPrintCmdMUS(c PrintCmd, w muss.Writer) (n int, err error) {
+	n, err = ord.MarshalString(c.From, nil, w)
 	if err != nil {
 		return
 	}
 	var n1 int
-	n1, err = ord.MarshalString(c.text, nil, w)
+	n1, err = ord.MarshalString(c.Text, nil, w)
 	n += n1
 	return
 }
 
-func UnmarshalPrintCmdV2MUS(r muss.Reader) (c PrintCmdV2, n int, err error) {
-	c.from, n, err = ord.UnmarshalString(nil, r)
+func UnmarshalPrintCmdMUS(r muss.Reader) (c PrintCmd, n int, err error) {
+	c.From, n, err = ord.UnmarshalString(nil, r)
 	if err != nil {
 		return
 	}
 	var n1 int
-	c.text, n1, err = ord.UnmarshalString(nil, r)
+	c.Text, n1, err = ord.UnmarshalString(nil, r)
 	n += n1
 	return
 }
 
-func SizePrintCmdV2MUS(c PrintCmdV2) (size int) {
-	size = ord.SizeString(c.from, nil)
-	return size + ord.SizeString(c.text, nil)
+func SizePrintCmdMUS(c PrintCmd) (size int) {
+	size = ord.SizeString(c.From, nil)
+	return size + ord.SizeString(c.Text, nil)
 }
 
-func SkipPrintCmdV2MUS(r muss.Reader) (n int, err error) {
+func SkipPrintCmdMUS(r muss.Reader) (n int, err error) {
 	n, err = ord.SkipString(nil, r)
 	if err != nil {
 		return
@@ -111,11 +111,11 @@ var (
 		muss.SizerFn[PrintCmdV1](SizePrintCmdV1MUS),
 		muss.SkipperFn(SkipPtrintCmdV1MUS),
 	)
-	PrintCmdV2DTS = dts.New[PrintCmdV2](PrintCmdV2DTM,
-		muss.MarshallerFn[PrintCmdV2](MarshalPrintCmdV2MUS),
-		muss.UnmarshallerFn[PrintCmdV2](UnmarshalPrintCmdV2MUS),
-		muss.SizerFn[PrintCmdV2](SizePrintCmdV2MUS),
-		muss.SkipperFn(SkipPrintCmdV2MUS),
+	PrintCmdDTS = dts.New[PrintCmd](PrintCmdDTM,
+		muss.MarshallerFn[PrintCmd](MarshalPrintCmdMUS),
+		muss.UnmarshallerFn[PrintCmd](UnmarshalPrintCmdMUS),
+		muss.SizerFn[PrintCmd](SizePrintCmdMUS),
+		muss.SkipperFn(SkipPrintCmdMUS),
 	)
 	OkResultDTS = dts.New[OkResult](OkResultDTM,
 		muss.MarshallerFn[OkResult](MarshalOkResultMUS),
