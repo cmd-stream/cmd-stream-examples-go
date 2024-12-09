@@ -16,9 +16,7 @@ func init() {
 }
 
 // This example demonstrates the standard use of cmd-stream-go with the Protobuf
-// serializer.
-//
-// In general, this example is the same as the 'standard', the main difference
+// serializer. In general it is the same as the 'standard', the main difference
 // is in the protobuf-format.go file.
 //
 // Here we have Calculator as the receiver and Eq1Cmd, Eq2Cmd as commands. The
@@ -35,12 +33,11 @@ func main() {
 	client, err := examples.CreateClient(addr, ClientCodec{})
 	assert.EqualError(err, nil)
 
-	// Now we will execute two commands.
+	// Execute two commands and wait for both to complete.
 	wgR := &sync.WaitGroup{}
 	wgR.Add(2)
 	go sendCmd(wgR, client)
 	go sendCmdWithTimeout(wgR, client)
-	// And wait while all of them are executed.
 	wgR.Wait()
 
 	// Close the client.
@@ -84,13 +81,12 @@ func sendCmdWithTimeout(wg *sync.WaitGroup,
 	)
 	seq, err := client.Send(cmd, results)
 	assert.EqualError(err, nil)
-	// Let's wait for the result.
+	// Wait for the result.
 	select {
 	case <-time.NewTimer(time.Second).C:
 		client.Forget(seq) // If we are no longer interested in the results of
 		// this command, we should call Forget().
 	case asyncResult := <-results:
-
 		// asyncResult.Error != nil if something is wrong with the connection.
 		assert.EqualError(asyncResult.Error, nil)
 		// The result sent by the command.
