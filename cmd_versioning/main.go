@@ -14,9 +14,9 @@ func init() {
 }
 
 // In this example there are two clients:
-//   - Old client - sends a command that is current for this client and old for
+//   - Old client - sends a command that is current for the client and old for
 //     the server.
-//   - Current client - sends a command that is current for both this client and
+//   - Current client - sends a command that is current for both the client and
 //     the server.
 //
 // To process an older version of a command on the server, ServerCodec.Decode()
