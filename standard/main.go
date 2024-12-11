@@ -14,11 +14,12 @@ func init() {
 	assert.On = true
 }
 
-// This example demonstrates the standard use of cmd-stream-go with the MUS
+// This example demonstrates the typical usage of cmd-stream-go with the MUS
 // serializer.
 //
-// Here we have Calculator as the receiver and Eq1Cmd, Eq2Cmd as commands. The
-// other files in this package also have useful comments, so check them as well.
+// The Calculator serves as the receiver, while the Eq1Cmd and Eq2Cmd types
+// represent the commands. Other files also include helpful comments, so be
+// sure to check them as well.
 func main() {
 	const addr = "127.0.0.1:9000"
 
