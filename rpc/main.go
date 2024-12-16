@@ -12,12 +12,10 @@ func init() {
 	assert.On = true
 }
 
-// This example shows how RPC can be implemented using cmd-stream-go.
+// This example shows how cmd-stream-go can be used as a tool for building RPC.
 //
-// It initialize EchoService with the cmd-stream-go client and then makes an RPC
-// call - EchoService.Echo().
-//
-// Here we have struct{} as the receiver and examples.EchoCmd as a command.
+// Here we have EchoService initialized with the cmd-stream-go client, struct{}
+// as the receiver and examples.EchoCmd as a command.
 func main() {
 	const addr = "127.0.0.1:9000"
 
