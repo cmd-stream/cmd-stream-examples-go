@@ -14,8 +14,8 @@ func init() {
 
 // This example shows how cmd-stream-go can be used as a tool for building RPC.
 //
-// Here we have EchoService initialized with the cmd-stream-go client, struct{}
-// as the receiver and examples.EchoCmd as a command.
+// Here EchoService is initialized with the cmd-stream-go client, struct{} is
+// used as the receiver and examples.EchoCmd as a command.
 func main() {
 	const addr = "127.0.0.1:9000"
 
