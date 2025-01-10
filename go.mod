@@ -4,14 +4,6 @@ go 1.22.3
 
 toolchain go1.23.3
 
-replace (
-	github.com/cmd-stream/base-go => ../base-go
-	github.com/cmd-stream/cmd-stream-go => ../cmd-stream-go
-	github.com/cmd-stream/delegate-go => ../delegate-go
-	github.com/cmd-stream/handler-go => ../handler-go
-	github.com/cmd-stream/transport-go => ../transport-go
-)
-
 require (
 	github.com/cmd-stream/base-go v0.0.0-20250106215352-64e1896e91a8
 	github.com/cmd-stream/cmd-stream-go v0.0.0-20241127002123-d4986d473fbf
@@ -22,12 +14,12 @@ require (
 	github.com/mus-format/common-go v0.0.0-20240704141923-ea7d12c7eed3
 	github.com/mus-format/mus-stream-dts-go v0.5.1
 	github.com/mus-format/mus-stream-go v0.4.2
+	github.com/mus-format/musgen-go v0.0.0-20241218193641-07c7610cd9d4
 	github.com/ymz-ncnk/assert v0.0.0-20240429131311-eb772ccdb3e2
 	google.golang.org/protobuf v1.36.1
 )
 
 require (
-	github.com/mus-format/musgen-go v0.0.0-20241218193641-07c7610cd9d4 // indirect
 	github.com/ymz-ncnk/jointwork-go v0.0.0-20240428103805-1ee224bde88a // indirect
 	github.com/ymz-ncnk/multierr-go v0.0.0-20230813140901-5e9302c2e02a // indirect
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
