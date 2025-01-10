@@ -1,23 +1,23 @@
-package exmpls
+package main
 
 import (
 	"errors"
 
 	"github.com/cmd-stream/base-go"
+	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
 	"github.com/cmd-stream/transport-go"
 	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
-// ClientCodec is a client codec.
 type ClientCodec struct{}
 
 // Encode is used by the client to send commands to the server. If Encode fails
 // with an error, the Client.Send() method will return it.
-func (c ClientCodec) Encode(cmd base.Cmd[Greeter], w transport.Writer) (
+func (c ClientCodec) Encode(cmd base.Cmd[exmpls.OldGreeter], w transport.Writer) (
 	err error) {
-	m, ok := cmd.(Marshaller)
+	m, ok := cmd.(exmpls.Marshaller)
 	if !ok {
-		return errors.New("cmd doesn't implement the Marshaller interface")
+		return errors.New("cmd doesn't implement Marshaller interface")
 	}
 	return m.Marshal(w)
 }
@@ -32,8 +32,8 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 	}
 	// Depending on dtm, unmarshal a specific result.
 	switch dtm {
-	case ResultDTM:
-		result, _, err = ResultDTS.UnmarshalData(r)
+	case exmpls.ResultDTM:
+		result, _, err = exmpls.ResultDTS.UnmarshalData(r)
 	default:
 		err = errors.New("unexpected result type")
 	}
@@ -41,14 +41,17 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 }
 
 // Size returns the size of the command in bytes. If the server imposes any
-// restrictions on the command size, i.e. ServerSettings.MaxCmdSize > 0, the
-// client will use this method to check it before sending.
-func (c ClientCodec) Size(cmd base.Cmd[Greeter]) (size int) {
-	// With this implementation, if a command does not implement the Sizer
-	// interface, it will still be sent regardless of the size.
-	s, ok := cmd.(Sizer)
-	if ok {
-		return s.Size()
-	}
-	return
+// restrictions on the command size, the client will use this method to
+// check it before sending.
+func (c ClientCodec) Size(cmd base.Cmd[exmpls.OldGreeter]) (size int) {
+	panic("undefined")
+	// switch c := cmd.(type) {
+	// case Eq1Cmd:
+	// 	size = SizeEq1CmdMUS(c)
+	// case Eq2Cmd:
+	// 	size = SizeEq2CmdMUS(c)
+	// default:
+	// 	panic("unexpected cmd type")
+	// }
+	// return
 }

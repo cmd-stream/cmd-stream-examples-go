@@ -1,0 +1,23 @@
+syntax = "proto3";
+package protobuf;
+
+option go_package = "github.com/cmd-stream/cmd-stream-examples-go/strandard_protobuf/main";
+
+// protoc --go_out=. --go_opt=paths=source_relative ./hello-world_protobuf/cmd_data.proto
+
+message SayHelloData {
+  string str = 1;
+}
+
+message SayFancyHelloData {
+  string str = 1;
+}
+
+message UnsupportedData {
+  string str = 1;
+}
+
+message ResultData {
+  string str = 1;
+  bool lastOne = 2;
+}

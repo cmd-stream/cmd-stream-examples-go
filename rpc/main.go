@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	examples "github.com/cmd-stream/cmd-stream-examples-go"
+	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -12,36 +12,41 @@ func init() {
 	assert.On = true
 }
 
-// This example shows how cmd-stream-go can be used as a tool for building RPC.
+// The rpc example demonstrates how to implement RPC using cmd-stream-go.
 //
-// Here EchoService is initialized with the cmd-stream-go client, struct{} is
-// used as the receiver and examples.EchoCmd as a command.
+// Here, you'll find a GreetingService with a SayHello method that sends the
+// corresponding SayHelloCmd command to the server.
 func main() {
 	const addr = "127.0.0.1:9000"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}
-	server, err := examples.StartServer(addr, examples.ServerCodec{}, struct{}{},
+	server, err := exmpls.StartServer(addr, exmpls.ServerCodec{},
+		exmpls.NewGreeter("Hello", "incredible", " "),
 		wgS)
 	assert.EqualError(err, nil)
 
+	MakeRPC_Call(addr)
+
+	// Close the server.
+	err = exmpls.CloseServer(server, wgS)
+	assert.Equal(err, nil)
+}
+
+func MakeRPC_Call(addr string) {
 	// Create the client.
-	client, err := examples.CreateClient(addr, examples.ClientCodec{})
+	client, err := exmpls.CreateClient(addr, exmpls.ClientCodec{})
 	assert.EqualError(err, nil)
 
 	// Create the service.
-	service := EchoServiceImpl{client}
+	service := GreeterService{client}
 
 	// Make an RPC call.
-	str, err := service.Echo(context.Background(), "hello world")
+	str, err := service.SayHello(context.Background(), "world")
 	assert.EqualError(err, nil)
-	assert.Equal[string](str, "hello world")
+	assert.Equal[string](str, "Hello world")
 
 	// Close the client.
-	err = examples.CloseClient(client)
+	err = exmpls.CloseClient(client)
 	assert.EqualError(err, nil)
-
-	// Close the server.
-	err = examples.CloseServer(server, wgS)
-	assert.Equal(err, nil)
 }

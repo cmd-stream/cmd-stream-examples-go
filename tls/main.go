@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cmd-stream/base-go"
 	base_client "github.com/cmd-stream/base-go/client"
 	base_server "github.com/cmd-stream/base-go/server"
-	examples "github.com/cmd-stream/cmd-stream-examples-go"
+	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
 	cs_client "github.com/cmd-stream/cmd-stream-go/client"
 	cs_server "github.com/cmd-stream/cmd-stream-go/server"
+	"github.com/cmd-stream/delegate-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -29,39 +29,41 @@ func (l listenerAdapter) SetDeadline(tm time.Time) error {
 	return l.l.SetDeadline(tm)
 }
 
-// This example shows how you can use cmd-stream-go with the TLS protocol.
-//
-// Here we have struct{} as the receiver and examples.EchoCmd as a command.
+// cmd-stream-go + TLS protocol.
 func main() {
 	const addr = "127.0.0.1:9000"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}
-	server, err := examples.StartServer(addr, examples.ServerCodec{}, struct{}{}, wgS)
+	server, err := StartServer(addr, exmpls.ServerCodec{},
+		exmpls.NewGreeter("Hello", "incredible", " "), wgS)
 	assert.EqualError(err, nil)
 
-	// Create the client.
-	client, err := examples.CreateClient(addr, examples.ClientCodec{})
-	assert.EqualError(err, nil)
-
-	// Send a command.
-	var (
-		cmd     = examples.EchoCmd("hello world")
-		results = make(chan base.AsyncResult, 1)
-	)
-	_, err = client.Send(cmd, results)
-	assert.EqualError(err, nil)
-
-	result := (<-results).Result.(examples.OneEchoResult)
-	assert.Equal[examples.OneEchoResult](result,
-		examples.OneEchoResult(cmd))
-
-	// Close the client.
-	err = examples.CloseClient(client)
-	assert.EqualError(err, nil)
+	SendCmd(addr)
 
 	// Close the server.
-	err = examples.CloseServer(server, wgS)
+	err = exmpls.CloseServer(server, wgS)
+	assert.EqualError(err, nil)
+}
+
+func SendCmd(addr string) {
+	// Create the client.
+	client, err := CreateClient(addr, exmpls.ClientCodec{})
+	assert.EqualError(err, nil)
+
+	wgC := &sync.WaitGroup{}
+	wgC.Add(1)
+	timeout := time.Second
+
+	// Send a command.
+	cmd := exmpls.NewSayHelloCmd("world")
+	wantResults := []exmpls.Result{exmpls.NewResult("Hello world", true)}
+	exmpls.SendCmd(cmd, timeout, nil, wantResults, exmpls.CompareResults, client, wgC)
+
+	wgC.Wait()
+
+	// Close the client.
+	err = exmpls.CloseClient(client)
 	assert.EqualError(err, nil)
 }
 
@@ -71,23 +73,15 @@ func StartServer[T any](addr string, codec cs_server.Codec[T], receiver T,
 	if err != nil {
 		return
 	}
-	config := tls.Config{Certificates: []tls.Certificate{cert}}
+	tlsConf := tls.Config{Certificates: []tls.Certificate{cert}}
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
 		return
 	}
-	tl := tls.NewListener(l, &config)
-
-	s = cs_server.NewDef[T](codec, receiver)
-
-	wg.Add(1)
-	go func(wg *sync.WaitGroup, tl net.Listener,
-		server *base_server.Server) {
-		defer wg.Done()
-		err := server.Serve(listenerAdapter{tl, l.(*net.TCPListener)})
-		assert.EqualError(err, base_server.ErrClosed)
-	}(wg, tl, s)
-	return
+	la := listenerAdapter{tls.NewListener(l, &tlsConf), l.(*net.TCPListener)}
+	return exmpls.StartServerWith(addr, codec, receiver, la,
+		delegate.ServerSettings{},
+		wg)
 }
 
 func CreateClient[T any](addr string, codec cs_client.Codec[T]) (
@@ -102,8 +96,5 @@ func CreateClient[T any](addr string, codec cs_client.Codec[T]) (
 	if err != nil {
 		return
 	}
-	// The last nil parameter corresponds to the UnexpectedResultHandler. In this
-	// case, unexpected results (if any) received from the server will be simply
-	// ignored.
-	return cs_client.NewDef[T](codec, conn, nil)
+	return exmpls.CreateClientWith(cs_client.Conf{}, codec, conn)
 }

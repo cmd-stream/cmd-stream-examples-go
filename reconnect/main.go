@@ -1,13 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"sync"
 	"time"
 
 	"github.com/cmd-stream/base-go"
-	examples "github.com/cmd-stream/cmd-stream-examples-go"
+	base_client "github.com/cmd-stream/base-go/client"
+	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
+	cs_client "github.com/cmd-stream/cmd-stream-go/client"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -30,53 +33,65 @@ func (f connFactory) New() (conn net.Conn, err error) {
 	return
 }
 
-// This example demostrates the reconnection feature.
+// In this example, the client attempts to reconnect to the server when the
+// connection is lost.
 //
-// It uses the cs_client.NewDefReconnect() function to create a client that can
-// reconnect to the server if the connection is lost.
-//
-// Here we have struct{} as the receiver and examples.EchoCmd as a command.
+// The client is created using the cs_client.NewDefReconnect() function.
 func main() {
 	// Start the server.
 	wgS := &sync.WaitGroup{}
-	server, err := examples.StartServer(Addr, examples.ServerCodec{}, struct{}{},
-		wgS)
+	server, err := exmpls.StartServer(Addr, exmpls.ServerCodec{},
+		exmpls.NewGreeter("Hello", "incredible", " "), wgS)
 	assert.EqualError(err, nil)
 
 	// Create the client.
-	client, err := examples.CreateReconnectClient(examples.ClientCodec{},
+	client, err := CreateReconnectClient(exmpls.ClientCodec{},
 		connFactory{})
 	assert.EqualError(err, nil)
 
 	// Close the server.
-	err = examples.CloseServer(server, wgS)
+	err = exmpls.CloseServer(server, wgS)
 	assert.EqualError(err, nil)
 
 	// Start the server again after some time.
 	time.Sleep(time.Second)
-	server, err = examples.StartServer(Addr, examples.ServerCodec{}, struct{}{},
-		wgS)
+	server, err = exmpls.StartServer(Addr, exmpls.ServerCodec{},
+		exmpls.NewGreeter("Hello", "incredible", " "), wgS)
 	assert.EqualError(err, nil)
 
 	// Wait for the client to reconnect.
 	time.Sleep(200 * time.Millisecond)
 
+	wgC := &sync.WaitGroup{}
+
 	// Send a command.
-	var (
-		cmd     = examples.EchoCmd("hello world")
-		results = make(chan base.AsyncResult, 1)
-	)
-	_, err = client.Send(cmd, results)
-	assert.EqualError(err, nil)
+	wgC.Add(1)
+	timeout := time.Second
+	cmd := exmpls.NewSayHelloCmd("world")
+	wantResults := []exmpls.Result{exmpls.NewResult("Hello world", true)}
+	exmpls.SendCmd(cmd, timeout, nil, wantResults, exmpls.CompareResults, client,
+		wgC)
 
-	result := (<-results).Result.(examples.OneEchoResult)
-	assert.Equal[examples.OneEchoResult](result, examples.OneEchoResult(cmd))
-
+	wgC.Wait()
 	// Close the client.
-	err = examples.CloseClient(client)
+	err = exmpls.CloseClient(client)
 	assert.EqualError(err, nil)
 
 	// Close the server.
-	err = examples.CloseServer(server, wgS)
+	err = exmpls.CloseServer(server, wgS)
 	assert.EqualError(err, nil)
+}
+
+func CreateReconnectClient[T any](codec cs_client.Codec[T],
+	connFactory cs_client.ConnFactory) (c *base_client.Client[T], err error) {
+	// unexpectedResultHandler processes unexpected results from the server.
+	// If you call Client.Forget(seq) for a command, its results will be handled
+	// by this function.
+	unexpectedResultHandler := func(seq base.Seq, result base.Result) {
+		fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
+			result)
+	}
+	return cs_client.NewDefReconnect[T](codec,
+		connFactory,
+		unexpectedResultHandler)
 }
