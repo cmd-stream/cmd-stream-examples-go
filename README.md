@@ -11,7 +11,7 @@ Contains several examples of using [cmd-stream-go](https://github.com/cmd-stream
 - server-streaming: an example where the command sends back multiple results.  
 - versioning: demonstrates how the server can handle different versions of the  
   same command, for example, to support older clients.  
-- rpc - demonstrates how to implement RPC with cmd-stream-go.
-- tls - cmd-stream-go + TLS.
+- rpc: demonstrates how to implement RPC with cmd-stream-go.
+- tls: cmd-stream-go + TLS.
 
 More information can be found in the corresponding `main.go` files.
