@@ -1,11 +1,12 @@
-package main
+package versioning
 
 import (
 	"errors"
 	"fmt"
 
+	hw "cmd-stream-examples-go/hello-world"
+
 	"github.com/cmd-stream/base-go"
-	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
 	"github.com/cmd-stream/transport-go"
 	dts "github.com/mus-format/mus-stream-dts-go"
 )
@@ -19,7 +20,7 @@ type ServerCodec struct{}
 // with an error, the server closes the connection.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
-	m, ok := result.(exmpls.Marshaller)
+	m, ok := result.(hw.Marshaller)
 	if !ok {
 		return errors.New("result doesn't implement Marshaller interface")
 	}
@@ -28,7 +29,7 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 
 // Decode is used by the server to receive commands from the client. If it
 // fails with an error, the server closes the connection.
-func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[exmpls.Greeter],
+func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[hw.Greeter],
 	err error) {
 	// Unmarshals dtm.
 	dtm, _, err := dts.UnmarshalDTM(r)
@@ -37,15 +38,15 @@ func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[exmpls.Greeter],
 	}
 	// Depending on dtm, unmarshal a specific command.
 	switch dtm {
-	case exmpls.OldSayHelloCmdDTM:
-		var oldCmd exmpls.OldSayHelloCmd
-		oldCmd, _, err = exmpls.OldSayHelloCmdDTS.UnmarshalData(r)
+	case OldSayHelloCmdDTM:
+		var oldCmd OldSayHelloCmd
+		oldCmd, _, err = OldSayHelloCmdDTS.UnmarshalData(r)
 		if err != nil {
 			return
 		}
 		cmd = oldCmd.Migrate()
-	case exmpls.SayHelloCmdDTM:
-		cmd, _, err = exmpls.SayHelloCmdDTS.UnmarshalData(r)
+	case hw.SayHelloCmdDTM:
+		cmd, _, err = hw.SayHelloCmdDTS.UnmarshalData(r)
 	default:
 		err = fmt.Errorf("unexpected cmd type %v", dtm)
 	}

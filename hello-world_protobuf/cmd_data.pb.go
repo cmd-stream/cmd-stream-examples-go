@@ -4,7 +4,7 @@
 // 	protoc        v5.27.1
 // source: hello-world_protobuf/cmd_data.proto
 
-package main
+package hwp
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -114,7 +114,7 @@ func (x *SayFancyHelloData) GetStr() string {
 	return ""
 }
 
-type UnsupportedData struct {
+type ResultData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -122,58 +122,10 @@ type UnsupportedData struct {
 	Str string `protobuf:"bytes,1,opt,name=str,proto3" json:"str,omitempty"`
 }
 
-func (x *UnsupportedData) Reset() {
-	*x = UnsupportedData{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *UnsupportedData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UnsupportedData) ProtoMessage() {}
-
-func (x *UnsupportedData) ProtoReflect() protoreflect.Message {
-	mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UnsupportedData.ProtoReflect.Descriptor instead.
-func (*UnsupportedData) Descriptor() ([]byte, []int) {
-	return file_hello_world_protobuf_cmd_data_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *UnsupportedData) GetStr() string {
-	if x != nil {
-		return x.Str
-	}
-	return ""
-}
-
-type ResultData struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Str     string `protobuf:"bytes,1,opt,name=str,proto3" json:"str,omitempty"`
-	LastOne bool   `protobuf:"varint,2,opt,name=lastOne,proto3" json:"lastOne,omitempty"`
-}
-
 func (x *ResultData) Reset() {
 	*x = ResultData{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[3]
+		mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -186,7 +138,7 @@ func (x *ResultData) String() string {
 func (*ResultData) ProtoMessage() {}
 
 func (x *ResultData) ProtoReflect() protoreflect.Message {
-	mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[3]
+	mi := &file_hello_world_protobuf_cmd_data_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +151,7 @@ func (x *ResultData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResultData.ProtoReflect.Descriptor instead.
 func (*ResultData) Descriptor() ([]byte, []int) {
-	return file_hello_world_protobuf_cmd_data_proto_rawDescGZIP(), []int{3}
+	return file_hello_world_protobuf_cmd_data_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ResultData) GetStr() string {
@@ -207,13 +159,6 @@ func (x *ResultData) GetStr() string {
 		return x.Str
 	}
 	return ""
-}
-
-func (x *ResultData) GetLastOne() bool {
-	if x != nil {
-		return x.LastOne
-	}
-	return false
 }
 
 var File_hello_world_protobuf_cmd_data_proto protoreflect.FileDescriptor
@@ -226,18 +171,14 @@ var file_hello_world_protobuf_cmd_data_proto_rawDesc = []byte{
 	0x10, 0x0a, 0x03, 0x73, 0x74, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74,
 	0x72, 0x22, 0x25, 0x0a, 0x11, 0x53, 0x61, 0x79, 0x46, 0x61, 0x6e, 0x63, 0x79, 0x48, 0x65, 0x6c,
 	0x6c, 0x6f, 0x44, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x73, 0x74, 0x72, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74, 0x72, 0x22, 0x23, 0x0a, 0x0f, 0x55, 0x6e, 0x73, 0x75,
-	0x70, 0x70, 0x6f, 0x72, 0x74, 0x65, 0x64, 0x44, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x73,
-	0x74, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74, 0x72, 0x22, 0x38, 0x0a,
-	0x0a, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x44, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x73,
-	0x74, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74, 0x72, 0x12, 0x18, 0x0a,
-	0x07, 0x6c, 0x61, 0x73, 0x74, 0x4f, 0x6e, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07,
-	0x6c, 0x61, 0x73, 0x74, 0x4f, 0x6e, 0x65, 0x42, 0x46, 0x5a, 0x44, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6d, 0x64, 0x2d, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d,
-	0x2f, 0x63, 0x6d, 0x64, 0x2d, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2d, 0x65, 0x78, 0x61, 0x6d,
-	0x70, 0x6c, 0x65, 0x73, 0x2d, 0x67, 0x6f, 0x2f, 0x73, 0x74, 0x72, 0x61, 0x6e, 0x64, 0x61, 0x72,
-	0x64, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x6d, 0x61, 0x69, 0x6e, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74, 0x72, 0x22, 0x1e, 0x0a, 0x0a, 0x52, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x44, 0x61, 0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x73, 0x74, 0x72, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x73, 0x74, 0x72, 0x42, 0x4b, 0x5a, 0x49, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6d, 0x64, 0x2d, 0x73, 0x74, 0x72, 0x65, 0x61,
+	0x6d, 0x2f, 0x63, 0x6d, 0x64, 0x2d, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2d, 0x65, 0x78, 0x61,
+	0x6d, 0x70, 0x6c, 0x65, 0x73, 0x2d, 0x67, 0x6f, 0x5f, 0x6e, 0x65, 0x77, 0x2f, 0x68, 0x65, 0x6c,
+	0x6c, 0x6f, 0x2d, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75,
+	0x66, 0x2f, 0x68, 0x77, 0x70, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -252,12 +193,11 @@ func file_hello_world_protobuf_cmd_data_proto_rawDescGZIP() []byte {
 	return file_hello_world_protobuf_cmd_data_proto_rawDescData
 }
 
-var file_hello_world_protobuf_cmd_data_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_hello_world_protobuf_cmd_data_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_hello_world_protobuf_cmd_data_proto_goTypes = []any{
 	(*SayHelloData)(nil),      // 0: protobuf.SayHelloData
 	(*SayFancyHelloData)(nil), // 1: protobuf.SayFancyHelloData
-	(*UnsupportedData)(nil),   // 2: protobuf.UnsupportedData
-	(*ResultData)(nil),        // 3: protobuf.ResultData
+	(*ResultData)(nil),        // 2: protobuf.ResultData
 }
 var file_hello_world_protobuf_cmd_data_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -298,18 +238,6 @@ func file_hello_world_protobuf_cmd_data_proto_init() {
 			}
 		}
 		file_hello_world_protobuf_cmd_data_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*UnsupportedData); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_hello_world_protobuf_cmd_data_proto_msgTypes[3].Exporter = func(v any, i int) any {
 			switch v := v.(*ResultData); i {
 			case 0:
 				return &v.state
@@ -328,7 +256,7 @@ func file_hello_world_protobuf_cmd_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_hello_world_protobuf_cmd_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

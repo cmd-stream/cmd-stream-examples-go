@@ -1,7 +1,6 @@
-package hwp
+package hw
 
 import (
-	hw "cmd-stream-examples-go/hello-world"
 	"errors"
 	"fmt"
 
@@ -12,9 +11,9 @@ import (
 
 type ClientCodec struct{}
 
-func (c ClientCodec) Encode(cmd base.Cmd[hw.Greeter], w transport.Writer) (
+func (c ClientCodec) Encode(cmd base.Cmd[Greeter], w transport.Writer) (
 	err error) {
-	m, ok := cmd.(hw.Marshaller) // Use defined previously Marshaller interface.
+	m, ok := cmd.(Marshaller) // Use defined previously Marshaller interface.
 	if !ok {
 		return errors.New("cmd doesn't implement the Marshaller interface")
 	}
@@ -29,7 +28,7 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 	}
 	// Depending on dtm, unmarshal a specific Result.
 	switch dtm {
-	case hw.ResultDTM:
+	case ResultDTM:
 		result, _, err = ResultDTS.UnmarshalData(r)
 	default:
 		err = fmt.Errorf("unexpected Result type %v", dtm)
@@ -37,7 +36,7 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 	return
 }
 
-func (c ClientCodec) Size(cmd base.Cmd[hw.Greeter]) (size int) {
+func (c ClientCodec) Size(cmd base.Cmd[Greeter]) (size int) {
 	// Implementation is unnecessary as ServerSettings.MaxCmdSize == 0.
 	panic("not implemented")
 }

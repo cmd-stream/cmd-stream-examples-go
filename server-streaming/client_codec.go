@@ -1,23 +1,25 @@
-package exmpls
+package server_streaming
 
 import (
 	"errors"
 
+	hw "cmd-stream-examples-go/hello-world"
+
 	"github.com/cmd-stream/base-go"
+
 	"github.com/cmd-stream/transport-go"
 	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
-// ClientCodec is a client codec.
 type ClientCodec struct{}
 
 // Encode is used by the client to send commands to the server. If Encode fails
 // with an error, the Client.Send() method will return it.
-func (c ClientCodec) Encode(cmd base.Cmd[Greeter], w transport.Writer) (
+func (c ClientCodec) Encode(cmd base.Cmd[hw.Greeter], w transport.Writer) (
 	err error) {
-	m, ok := cmd.(Marshaller)
+	m, ok := cmd.(hw.Marshaller)
 	if !ok {
-		return errors.New("cmd doesn't implement the Marshaller interface")
+		return errors.New("cmd doesn't implement Marshaller interface")
 	}
 	return m.Marshal(w)
 }
@@ -41,14 +43,8 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 }
 
 // Size returns the size of the command in bytes. If the server imposes any
-// restrictions on the command size, i.e. ServerSettings.MaxCmdSize > 0, the
-// client will use this method to check it before sending.
-func (c ClientCodec) Size(cmd base.Cmd[Greeter]) (size int) {
-	// With this implementation, if a command does not implement the Sizer
-	// interface, it will still be sent regardless of the size.
-	s, ok := cmd.(Sizer)
-	if ok {
-		return s.Size()
-	}
-	return
+// restrictions on the command size, the client will use this method to
+// check it before sending.
+func (c ClientCodec) Size(cmd base.Cmd[hw.Greeter]) (size int) {
+	panic("not implemented")
 }

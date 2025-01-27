@@ -1,12 +1,15 @@
-package main
+package hwp
 
 import (
 	"io"
 
+	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/mus-stream-dts-go"
 	muss "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/varint"
 	"google.golang.org/protobuf/proto"
+
+	hw "cmd-stream-examples-go/hello-world"
 )
 
 // SayHelloCmd
@@ -18,7 +21,8 @@ func MarshalSayHelloCmdProtobuf(c SayHelloCmd, w muss.Writer) (n int,
 
 func UnmarshalSayHelloCmdProtobuf(r muss.Reader) (c SayHelloCmd, n int, err error) {
 	data := &SayHelloData{}
-	n, err = unmarshalCmd[*SayHelloData](data, r)
+	n, err = unmarshalCmd[*SayHelloData](data,
+		com.ValidatorFn[int](hw.ValidateLength), r)
 	if err != nil {
 		return
 	}
@@ -44,7 +48,8 @@ func MarshalSayFancyHelloCmdProtobuf(c SayFancyHelloCmd, w muss.Writer) (
 func UnmarshalSayFancyHelloCmdProtobuf(r muss.Reader) (c SayFancyHelloCmd,
 	n int, err error) {
 	data := &SayFancyHelloData{}
-	n, err = unmarshalCmd[*SayFancyHelloData](data, r)
+	n, err = unmarshalCmd[*SayFancyHelloData](data,
+		com.ValidatorFn[int](hw.ValidateLength), r)
 	if err != nil {
 		return
 	}
@@ -57,33 +62,6 @@ func SizeSayFancyHelloCmdProtobuf(c SayFancyHelloCmd) (size int) {
 }
 
 func SkipSayFancyHelloCmdProtobuf(r muss.Reader) (n int, err error) {
-	panic("not implemented")
-}
-
-// UnsupportedCmd
-
-func MarshalUnsupportedCmdProtobuf(c UnsupportedCmd, w muss.Writer) (
-	n int, err error) {
-	return marshalCmd(c, w)
-}
-
-func UnmarshalUnsupportedCmdProtobuf(r muss.Reader) (c UnsupportedCmd,
-	n int, err error) {
-	data := &UnsupportedData{}
-	n, err = unmarshalCmd[*UnsupportedData](data, r)
-	if err != nil {
-		return
-	}
-	c.UnsupportedData = data
-	// c.UnsupportedData, n, err = unmarshalCmd[*UnsupportedData](r)
-	return
-}
-
-func SizeUnsupportedCmdProtobuf(c UnsupportedCmd) (size int) {
-	panic("not implemented")
-}
-
-func SkipUnsupportedCmdProtobuf(r muss.Reader) (n int, err error) {
 	panic("not implemented")
 }
 
@@ -106,7 +84,7 @@ func MarshalResultProtobuf(result Result, w muss.Writer) (n int, err error) {
 
 func UnmarshalResultProtobuf(r muss.Reader) (result Result, n int, err error) {
 	data := &ResultData{}
-	n, err = unmarshalCmd[*ResultData](data, r)
+	n, err = unmarshalCmd[*ResultData](data, nil, r)
 	if err != nil {
 		return
 	}
@@ -123,25 +101,19 @@ func SkipResultProtobuf(r muss.Reader) (n int, err error) {
 }
 
 var (
-	SayHelloCmdDTS = dts.New[SayHelloCmd](SayHelloCmdDTM,
+	SayHelloCmdDTS = dts.New[SayHelloCmd](hw.SayHelloCmdDTM,
 		muss.MarshallerFn[SayHelloCmd](MarshalSayHelloCmdProtobuf),
 		muss.UnmarshallerFn[SayHelloCmd](UnmarshalSayHelloCmdProtobuf),
 		muss.SizerFn[SayHelloCmd](SizeSayHelloCmdProtobuf),
 		muss.SkipperFn(SkipSayHelloCmdProtobuf),
 	)
-	SayFancyHelloCmdDTS = dts.New[SayFancyHelloCmd](SayFancyHelloCmdDTM,
+	SayFancyHelloCmdDTS = dts.New[SayFancyHelloCmd](hw.SayFancyHelloCmdDTM,
 		muss.MarshallerFn[SayFancyHelloCmd](MarshalSayFancyHelloCmdProtobuf),
 		muss.UnmarshallerFn[SayFancyHelloCmd](UnmarshalSayFancyHelloCmdProtobuf),
 		muss.SizerFn[SayFancyHelloCmd](SizeSayFancyHelloCmdProtobuf),
 		muss.SkipperFn(SkipSayFancyHelloCmdProtobuf),
 	)
-	UnsupportedCmdDTS = dts.New[UnsupportedCmd](UnsupportedCmdDTM,
-		muss.MarshallerFn[UnsupportedCmd](MarshalUnsupportedCmdProtobuf),
-		muss.UnmarshallerFn[UnsupportedCmd](UnmarshalUnsupportedCmdProtobuf),
-		muss.SizerFn[UnsupportedCmd](SizeUnsupportedCmdProtobuf),
-		muss.SkipperFn(SkipUnsupportedCmdProtobuf),
-	)
-	ResultDTS = dts.New[Result](ResultDTM,
+	ResultDTS = dts.New[Result](hw.ResultDTM,
 		muss.MarshallerFn[Result](MarshalResultProtobuf),
 		muss.UnmarshallerFn[Result](UnmarshalResultProtobuf),
 		muss.SizerFn[Result](SizeResultProtobuf),
@@ -164,10 +136,16 @@ func marshalCmd[T proto.Message](c T, w muss.Writer) (n int, err error) {
 	return
 }
 
-func unmarshalCmd[T proto.Message](d T, r muss.Reader) (n int, err error) {
+func unmarshalCmd[T proto.Message](d T, v com.Validator[int],
+	r muss.Reader) (n int, err error) {
 	l, n, err := varint.UnmarshalPositiveInt(r)
 	if err != nil {
 		return
+	}
+	if v != nil {
+		if err = v.Validate(l); err != nil {
+			return
+		}
 	}
 	bs := make([]byte, l)
 	n1, err := io.ReadFull(r, bs)

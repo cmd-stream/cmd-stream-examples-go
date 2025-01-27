@@ -1,8 +1,6 @@
-package exmpls
+package hw
 
-import (
-	"strings"
-)
+import "strings"
 
 // NewGreeter creates a new Greeter.
 func NewGreeter(interjection, adjective, sep string) Greeter {
@@ -13,7 +11,8 @@ func NewGreeter(interjection, adjective, sep string) Greeter {
 	}
 }
 
-// Greeter represents a Receiver.
+// Greeter represents a Receiver and provides the functionality for creating
+// greetings.
 type Greeter struct {
 	interjection string
 	adjective    string
@@ -30,11 +29,4 @@ func (g Greeter) Adjective() string {
 
 func (g Greeter) Join(strs ...string) string {
 	return strings.Join(strs, g.sep)
-}
-
-// OldGreeter represents an old Receiver used by the server.
-type OldGreeter struct{}
-
-func (g OldGreeter) SayHello(str string) string {
-	return "Hello " + str
 }

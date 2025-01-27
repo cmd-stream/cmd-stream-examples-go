@@ -1,10 +1,10 @@
-package main
+package hwp
 
 import "github.com/cmd-stream/transport-go"
 
-func NewResult(str string, lastOne bool) Result {
+func NewResult(str string) Result {
 	return Result{
-		ResultData: &ResultData{Str: str, LastOne: lastOne},
+		ResultData: &ResultData{Str: str},
 	}
 }
 
@@ -12,8 +12,12 @@ type Result struct {
 	*ResultData
 }
 
+func (r Result) Greeting() string {
+	return r.ResultData.Str
+}
+
 func (r Result) LastOne() bool {
-	return r.ResultData.LastOne
+	return true
 }
 
 func (c Result) Marshal(w transport.Writer) (err error) {

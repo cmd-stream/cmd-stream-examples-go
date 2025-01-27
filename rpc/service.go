@@ -1,29 +1,30 @@
-package main
+package rpc
 
 import (
 	"context"
 
+	hw "cmd-stream-examples-go/hello-world"
+
 	"github.com/cmd-stream/base-go"
-	base_client "github.com/cmd-stream/base-go/client"
-	exmpls "github.com/cmd-stream/cmd-stream-examples-go"
+	bcln "github.com/cmd-stream/base-go/client"
 )
 
 type GreeterService struct {
-	client *base_client.Client[exmpls.Greeter]
+	client *bcln.Client[hw.Greeter]
 }
 
 func (s GreeterService) SayHello(ctx context.Context, str string) (string, error) {
-	cmd := exmpls.NewSayHelloCmd(str)
+	cmd := hw.NewSayHelloCmd(str)
 
-	result, err := SendCmd[exmpls.Greeter, exmpls.Result](ctx, cmd, s.client)
+	result, err := SendCmd[hw.Greeter, hw.Result](ctx, cmd, s.client)
 	if err != nil {
 		return "", err
 	}
-	return result.Str(), nil
+	return result.Greeting(), nil
 }
 
 func SendCmd[T, R any](ctx context.Context, cmd base.Cmd[T],
-	client *base_client.Client[T]) (result R, err error) {
+	client *bcln.Client[T]) (result R, err error) {
 	var (
 		seq     base.Seq
 		results = make(chan base.AsyncResult)

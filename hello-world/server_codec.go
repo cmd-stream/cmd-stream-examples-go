@@ -1,4 +1,4 @@
-package exmpls
+package hw
 
 import (
 	"errors"
@@ -9,40 +9,35 @@ import (
 	dts "github.com/mus-format/mus-stream-dts-go"
 )
 
-// ServerCodec is a server Codec.
-//
-// A single ServerCodec will be used by all server Workers, so it must be
-// thread-safe.
+// A single ServerCodec instance is shared by all server Workers (each Worker
+// handles one client connection at a time), so it must be thread-safe.
 type ServerCodec struct{}
 
-// Encode is used by the server to send results. If Encode fails with an error,
-// the server closes the coresponding client connection.
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 	err error) {
-	m, ok := result.(Marshaller)
+	m, ok := result.(Marshaller) // Marshaller interface is used again.
 	if !ok {
 		return errors.New("result doesn't implement Marshaller interface")
 	}
 	return m.Marshal(w)
 }
 
-// Decode is used by the server to receive commands. If it fails with an error,
-// the server closes the corresponding client connection.
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Greeter],
 	err error) {
-	// Unmarshal dtm.
+	// Using mus-stream-dts-go library unmarshal dtm.
 	dtm, _, err := dts.UnmarshalDTM(r)
 	if err != nil {
 		return
 	}
-	// Depending on dtm, unmarshal a specific command.
+	// Depending on dtm, unmarshal a specific Command. You see the server cannot
+	// execute unexpected Commands with random behavior.
 	switch dtm {
 	case SayHelloCmdDTM:
 		cmd, _, err = SayHelloCmdDTS.UnmarshalData(r)
 	case SayFancyHelloCmdDTM:
 		cmd, _, err = SayFancyHelloCmdDTS.UnmarshalData(r)
 	default:
-		err = fmt.Errorf("unexpected cmd type %v", dtm)
+		err = fmt.Errorf("unexpected Command type %v", dtm)
 	}
 	return
 }
