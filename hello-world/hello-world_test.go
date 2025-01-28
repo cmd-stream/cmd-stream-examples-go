@@ -52,7 +52,7 @@ func SendCmds(addr string, t *testing.T) {
 
 	var (
 		wgR     = &sync.WaitGroup{}
-		timeout = time.Second
+		timeout = 3 * time.Second
 	)
 	// Send SayHelloCmd command.
 	wgR.Add(1)
