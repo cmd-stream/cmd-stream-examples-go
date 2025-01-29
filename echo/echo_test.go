@@ -16,9 +16,9 @@ func TestEcho(t *testing.T) {
 	const addr = "127.0.0.1:9000"
 
 	// Start the server.
-	server := cser.Default[struct{}](ServerCodec{}, struct{}{})
 	l, err := net.Listen("tcp", addr)
 	assert_fatal.EqualError(err, nil, t)
+	server := cser.Default[struct{}](ServerCodec{}, struct{}{})
 	go func() {
 		server.Serve(l.(*net.TCPListener))
 	}()
@@ -30,10 +30,15 @@ func TestEcho(t *testing.T) {
 	assert_fatal.EqualError(err, nil, t)
 
 	// Send a Command and get the Result.
-	results := make(chan base.AsyncResult, 1)
-	_, err = client.Send(EchoCmd("Hello world"), results)
+	var (
+		results    = make(chan base.AsyncResult, 1)
+		str        = "Hello world"
+		cmd        = EchoCmd(str)
+		wantResult = Result(str)
+	)
+	_, err = client.Send(cmd, results)
 	assert_fatal.EqualError(err, nil, t)
-	assert_fatal.Equal((<-results).Result.(Result), "Hello world", t)
+	assert_fatal.Equal((<-results).Result.(Result), wantResult, t)
 
 	// Close the client.
 	err = client.Close()
