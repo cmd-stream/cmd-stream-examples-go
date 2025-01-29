@@ -6,12 +6,12 @@ is one example):
 - hello-world_protobuf: Demonstrates the basic usage of cmd-stream-go with the 
   Protobuf serializer.
 - keepalive: Shows how the client can keep a connection alive when there are no 
-  commands to send.
-- reconnect: Demonstrates how the client can reconnect to the server after a 
-  lost connection.
-- server-streaming: An example where the command sends back multiple results.
+  Commands to send.
+- reconnect: Demonstrates how the client can reconnect to the server after
+  losing the connection.
+- server-streaming: An example where the Command sends back multiple Results.
 - versioning: Shows how the server can handle different versions of the same 
-  command, such as supporting older clients.
+  Command.
 - rpc: Demonstrates how to implement RPC using cmd-stream-go.
 - tls: Shows how to use cmd-stream-go with TLS.
 
