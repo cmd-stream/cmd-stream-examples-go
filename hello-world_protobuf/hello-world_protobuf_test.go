@@ -7,6 +7,9 @@ import (
 
 	hw "cmd-stream-examples-go/hello-world"
 
+	"github.com/cmd-stream/base-go"
+	dcodec "github.com/cmd-stream/dtm-codec-go"
+
 	assert_error "github.com/ymz-ncnk/assert/error"
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"
 )
@@ -15,15 +18,26 @@ import (
 //  1. Commands (SayHelloCmd and SayFancyHelloCmd) store all properties in data
 //     structures that are serializable by Protobuf.
 //  2. The protobuf-format.go file instead of mus-format.go.
+//  3. Uses dtm-codec-go to create codecs.
 //
-// Everything else, including the codecs, remains the same.
+// Everything else remains the same.
 
 func Test(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9002"
+
+	// Create a server codec.
+	serverCodec, err := dcodec.CreateServerCodec(
+		[]dcodec.Unmarshaller[base.Cmd[hw.Greeter]]{
+			dcodec.NewCmdDTSAdapter(SayHelloCmdDTS),
+			dcodec.NewCmdDTSAdapter(SayFancyHelloCmdDTS),
+		},
+	)
+	assert_fatal.EqualError(err, nil, t)
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}
-	server, err := hw.StartServer(addr, ServerCodec{},
+
+	server, err := hw.StartServer(addr, serverCodec,
 		hw.NewGreeter("Hello", "incredible", " "),
 		wgS)
 	assert_fatal.EqualError(err, nil, t)
@@ -36,8 +50,17 @@ func Test(t *testing.T) {
 }
 
 func SendCmds(addr string, t *testing.T) {
+
+	// Create a client codec.
+	clientCodec, err := dcodec.CreateClientCodec[hw.Greeter](
+		[]dcodec.Unmarshaller[base.Result]{
+			dcodec.NewResultDTSAdapter(ResultDTS),
+		},
+	)
+	assert_fatal.EqualError(err, nil, t)
+
 	// Create the client.
-	client, err := hw.CreateClient[hw.Greeter](addr, ClientCodec{})
+	client, err := hw.CreateClient[hw.Greeter](addr, clientCodec)
 	assert_fatal.EqualError(err, nil, t)
 
 	var (
