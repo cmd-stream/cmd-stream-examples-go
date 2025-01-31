@@ -17,7 +17,7 @@ import (
 // corresponding SayHelloCmd command to the server.
 
 func TestRPC(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9005"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}

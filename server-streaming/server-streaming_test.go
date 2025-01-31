@@ -15,7 +15,7 @@ import (
 // multiple results back to the client.
 
 func TestServerStreaming(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9006"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}

@@ -29,7 +29,7 @@ import (
 // to the gen/main.go file for details.
 
 func TestGreeting(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9001"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}

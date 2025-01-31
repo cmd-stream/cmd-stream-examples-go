@@ -8,5 +8,8 @@ import (
 const (
 	SayHelloCmdDTM com.DTM = iota
 	SayFancyHelloCmdDTM
-	ResultDTM
+)
+
+const (
+	ResultDTM com.DTM = iota
 )

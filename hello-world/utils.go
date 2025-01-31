@@ -12,7 +12,6 @@ import (
 	bser "github.com/cmd-stream/base-go/server"
 	ccln "github.com/cmd-stream/cmd-stream-go/client"
 	cser "github.com/cmd-stream/cmd-stream-go/server"
-	"github.com/cmd-stream/delegate-go"
 	"github.com/cmd-stream/handler-go"
 )
 
@@ -35,8 +34,6 @@ func StartServer[T any](addr string, codec cser.Codec[T], receiver T,
 
 func StartServerWithListener[T any](addr string, codec cser.Codec[T], receiver T,
 	l base.Listener, wg *sync.WaitGroup) (server *bser.Server, err error) {
-	// Both info and settings variables represent the system data, which is send
-	// by the server to initialize the client connection.
 	var (
 		// Server configuration.
 		conf = cser.Conf{
@@ -61,12 +58,7 @@ func StartServerWithListener[T any](addr string, codec cser.Codec[T], receiver T
 		// ServerInfo allows the client to verify compatibility with the server.
 		// For example, ServerInfo can identify the set of commands supported by the
 		// server. It is just a slice of bytes, so can hold any value.
-		info = cser.DefaultServerInfo
-		// ServerSettings allow the server to share desired communication settings,
-		// such as the maximum command size.
-		settings = delegate.ServerSettings{
-			// MaxCmdSize: ...
-		}
+		info    = cser.DefaultServerInfo
 		invoker = NewInvoker(receiver)
 		// LostConnCallback is useful for debugging, it is called by the server
 		// when the connection to the client is lost.
@@ -74,7 +66,7 @@ func StartServerWithListener[T any](addr string, codec cser.Codec[T], receiver T
 			fmt.Printf("lost connection to %v, cause %v\n", addr, err)
 		}
 	)
-	server = cser.New(conf, info, settings, codec, invoker, callback)
+	server = cser.New(conf, info, codec, invoker, callback)
 
 	wg.Add(1)
 	go func(wg *sync.WaitGroup, listener base.Listener,

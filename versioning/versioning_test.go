@@ -18,7 +18,7 @@ import (
 // so that the server can execute it.
 
 func TestVersionin(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9008"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}

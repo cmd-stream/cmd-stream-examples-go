@@ -18,7 +18,7 @@ import (
 //
 // The client is created using the ccln.NewReconnect() function.
 
-const Addr = "127.0.0.1:9000"
+const Addr = "127.0.0.1:9004"
 
 type connFactory struct{}
 

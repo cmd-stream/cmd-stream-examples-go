@@ -35,8 +35,3 @@ func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) 
 	}
 	return
 }
-
-func (c ClientCodec) Size(cmd base.Cmd[Greeter]) (size int) {
-	// Implementation is unnecessary as ServerSettings.MaxCmdSize == 0.
-	panic("not implemented")
-}

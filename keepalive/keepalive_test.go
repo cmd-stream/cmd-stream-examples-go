@@ -24,7 +24,7 @@ import (
 //	}
 
 func TestKeepalive(t *testing.T) {
-	const addr = "127.0.0.1:9000"
+	const addr = "127.0.0.1:9003"
 
 	// Start the server.
 	wgS := &sync.WaitGroup{}
