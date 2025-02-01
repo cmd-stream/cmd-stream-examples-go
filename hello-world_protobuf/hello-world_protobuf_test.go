@@ -26,7 +26,7 @@ func Test(t *testing.T) {
 	const addr = "127.0.0.1:9002"
 
 	// Create a server codec.
-	serverCodec, err := dcodec.CreateServerCodec(
+	serverCodec, err := dcodec.NewServerCodec(
 		[]dcodec.Unmarshaller[base.Cmd[hw.Greeter]]{
 			dcodec.NewCmdDTSAdapter(SayHelloCmdDTS),
 			dcodec.NewCmdDTSAdapter(SayFancyHelloCmdDTS),
@@ -52,7 +52,7 @@ func Test(t *testing.T) {
 func SendCmds(addr string, t *testing.T) {
 
 	// Create a client codec.
-	clientCodec, err := dcodec.CreateClientCodec[hw.Greeter](
+	clientCodec, err := dcodec.NewClientCodec[hw.Greeter](
 		[]dcodec.Unmarshaller[base.Result]{
 			dcodec.NewResultDTSAdapter(ResultDTS),
 		},

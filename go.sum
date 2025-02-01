@@ -6,6 +6,8 @@ github.com/cmd-stream/delegate-go v0.0.0-20250130202943-5a16b3074403 h1:tJED/IgL
 github.com/cmd-stream/delegate-go v0.0.0-20250130202943-5a16b3074403/go.mod h1:R47rbHtW1y6BY0GhOIaYWf8C+QF/6Hrqw876BXA4AAw=
 github.com/cmd-stream/dtm-codec-go v0.0.0-20250131180540-c943074c97f8 h1:X6qrJxxMu5UnPm2I+34yp9zS9+lTdR/4znCmakqUe1k=
 github.com/cmd-stream/dtm-codec-go v0.0.0-20250131180540-c943074c97f8/go.mod h1:sAmwfzuOXaiFHnej5FTEG5rLdkgX6cX6PvxgWZVodlY=
+github.com/cmd-stream/dtm-codec-go v0.0.0-20250201122904-db4becaa47f5 h1:i9wiPcRRFHtyY+1ALg+vBW2CaKWY+Ra1XKR40fxA650=
+github.com/cmd-stream/dtm-codec-go v0.0.0-20250201122904-db4becaa47f5/go.mod h1:sAmwfzuOXaiFHnej5FTEG5rLdkgX6cX6PvxgWZVodlY=
 github.com/cmd-stream/handler-go v0.0.0-20250130203936-7221d588ada7 h1:aW3Gw+5HmO+tQr+bF8DRogCm7SHh75ZzasdWkfode70=
 github.com/cmd-stream/handler-go v0.0.0-20250130203936-7221d588ada7/go.mod h1:9hLBqMUvbGQ1GRqfZDdSMvCqsO9uD3WViTl3vRuhejA=
 github.com/cmd-stream/transport-go v0.0.0-20250131173127-241ac499953e h1:+liRzAAXmv+gLaZIb1D7B53rmYvumaMmv336NSmQomY=
