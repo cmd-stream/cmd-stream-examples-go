@@ -7,7 +7,7 @@ func NewResult(str string) Result {
 	return Result{str}
 }
 
-// Result implements the Result interface.
+// Result implements the base.Result interface.
 type Result struct {
 	str string
 }

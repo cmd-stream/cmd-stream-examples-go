@@ -17,11 +17,10 @@ import (
 // Differences from the hello-world example:
 //  1. Commands (SayHelloCmd and SayFancyHelloCmd) store all properties in data
 //     structures that are serializable by Protobuf.
-//  2. The protobuf-format.go file instead of mus-format.go.
+//  2. The protobuf-format.go file instead of mus-format.gen.go.
 //  3. Uses dtm-codec-go to create codecs.
 //
 // Everything else remains the same.
-
 func Test(t *testing.T) {
 	const addr = "127.0.0.1:9002"
 
@@ -50,7 +49,6 @@ func Test(t *testing.T) {
 }
 
 func SendCmds(addr string, t *testing.T) {
-
 	// Create a client codec.
 	clientCodec, err := dcodec.NewClientCodec[hw.Greeter](
 		[]dcodec.Unmarshaller[base.Result]{

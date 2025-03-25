@@ -32,7 +32,7 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[hw.Greeter],
 	err error) {
 	// Unmarshals dtm.
-	dtm, _, err := dts.UnmarshalDTM(r)
+	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
 	}

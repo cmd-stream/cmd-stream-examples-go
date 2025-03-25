@@ -11,12 +11,12 @@ type ClientCodec struct{}
 
 func (c ClientCodec) Encode(cmd base.Cmd[struct{}], w transport.Writer) (
 	err error) {
-	_, err = ord.MarshalString(string(cmd.(EchoCmd)), nil, w)
+	_, err = ord.String.Marshal(string(cmd.(EchoCmd)), w)
 	return
 }
 
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
-	str, _, err := ord.UnmarshalString(nil, r)
+	str, _, err := ord.String.Unmarshal(r)
 	if err != nil {
 		return
 	}

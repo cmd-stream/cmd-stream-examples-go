@@ -14,12 +14,17 @@ import (
 
 // SayHelloCmd
 
-func MarshalSayHelloCmdProtobuf(c SayHelloCmd, w muss.Writer) (n int,
+var SayHelloCmdProtobuf = sayHelloCmdProtobuf{}
+
+type sayHelloCmdProtobuf struct{}
+
+func (s sayHelloCmdProtobuf) Marshal(c SayHelloCmd, w muss.Writer) (n int,
 	err error) {
 	return marshalCmd(c, w)
 }
 
-func UnmarshalSayHelloCmdProtobuf(r muss.Reader) (c SayHelloCmd, n int, err error) {
+func (s sayHelloCmdProtobuf) Unmarshal(r muss.Reader) (c SayHelloCmd, n int,
+	err error) {
 	data := &SayHelloData{}
 	n, err = unmarshalCmd[*SayHelloData](data,
 		com.ValidatorFn[int](hw.ValidateLength), r)
@@ -30,22 +35,27 @@ func UnmarshalSayHelloCmdProtobuf(r muss.Reader) (c SayHelloCmd, n int, err erro
 	return
 }
 
-func SizeSayHelloCmdProtobuf(c SayHelloCmd) (size int) {
+func (s sayHelloCmdProtobuf) Size(c SayHelloCmd) (size int) {
 	panic("not implemented")
 }
 
-func SkipSayHelloCmdProtobuf(r muss.Reader) (n int, err error) {
+func (s sayHelloCmdProtobuf) Skip(r muss.Reader) (n int,
+	err error) {
 	panic("not implemented")
 }
 
 // SayFancyHelloCmd
 
-func MarshalSayFancyHelloCmdProtobuf(c SayFancyHelloCmd, w muss.Writer) (
+var SayFancyHelloCmdProtobuf = sayFancyHelloCmdProtobuf{}
+
+type sayFancyHelloCmdProtobuf struct{}
+
+func (s sayFancyHelloCmdProtobuf) Marshal(c SayFancyHelloCmd, w muss.Writer) (
 	n int, err error) {
 	return marshalCmd(c, w)
 }
 
-func UnmarshalSayFancyHelloCmdProtobuf(r muss.Reader) (c SayFancyHelloCmd,
+func (s sayFancyHelloCmdProtobuf) Unmarshal(r muss.Reader) (c SayFancyHelloCmd,
 	n int, err error) {
 	data := &SayFancyHelloData{}
 	n, err = unmarshalCmd[*SayFancyHelloData](data,
@@ -57,23 +67,28 @@ func UnmarshalSayFancyHelloCmdProtobuf(r muss.Reader) (c SayFancyHelloCmd,
 	return
 }
 
-func SizeSayFancyHelloCmdProtobuf(c SayFancyHelloCmd) (size int) {
+func (s sayFancyHelloCmdProtobuf) Size(c SayFancyHelloCmd) (size int) {
 	panic("not implemented")
 }
 
-func SkipSayFancyHelloCmdProtobuf(r muss.Reader) (n int, err error) {
+func (s sayFancyHelloCmdProtobuf) Skip(r muss.Reader) (n int, err error) {
 	panic("not implemented")
 }
 
 // Result
 
-func MarshalResultProtobuf(result Result, w muss.Writer) (n int, err error) {
+var ResultProtobuf = resultProtobuf{}
+
+type resultProtobuf struct{}
+
+func (s resultProtobuf) Marshal(result Result, w muss.Writer) (n int,
+	err error) {
 	bs, err := proto.Marshal(result.ResultData)
 	if err != nil {
 		return
 	}
 	l := len(bs)
-	n, err = varint.MarshalPositiveInt(l, w)
+	n, err = varint.PositiveInt.Marshal(l, w)
 	if err != nil {
 		return
 	}
@@ -82,7 +97,8 @@ func MarshalResultProtobuf(result Result, w muss.Writer) (n int, err error) {
 	return
 }
 
-func UnmarshalResultProtobuf(r muss.Reader) (result Result, n int, err error) {
+func (s resultProtobuf) Unmarshal(r muss.Reader) (result Result, n int,
+	err error) {
 	data := &ResultData{}
 	n, err = unmarshalCmd[*ResultData](data, nil, r)
 	if err != nil {
@@ -92,33 +108,20 @@ func UnmarshalResultProtobuf(r muss.Reader) (result Result, n int, err error) {
 	return
 }
 
-func SizeResultProtobuf(result Result) (size int) {
+func (s resultProtobuf) Size(result Result) (size int) {
 	panic("not implemented")
 }
 
-func SkipResultProtobuf(r muss.Reader) (n int, err error) {
+func (s resultProtobuf) Skip(r muss.Reader) (n int, err error) {
 	panic("not implemented")
 }
 
 var (
 	SayHelloCmdDTS = dts.New[SayHelloCmd](hw.SayHelloCmdDTM,
-		muss.MarshallerFn[SayHelloCmd](MarshalSayHelloCmdProtobuf),
-		muss.UnmarshallerFn[SayHelloCmd](UnmarshalSayHelloCmdProtobuf),
-		muss.SizerFn[SayHelloCmd](SizeSayHelloCmdProtobuf),
-		muss.SkipperFn(SkipSayHelloCmdProtobuf),
-	)
+		SayHelloCmdProtobuf)
 	SayFancyHelloCmdDTS = dts.New[SayFancyHelloCmd](hw.SayFancyHelloCmdDTM,
-		muss.MarshallerFn[SayFancyHelloCmd](MarshalSayFancyHelloCmdProtobuf),
-		muss.UnmarshallerFn[SayFancyHelloCmd](UnmarshalSayFancyHelloCmdProtobuf),
-		muss.SizerFn[SayFancyHelloCmd](SizeSayFancyHelloCmdProtobuf),
-		muss.SkipperFn(SkipSayFancyHelloCmdProtobuf),
-	)
-	ResultDTS = dts.New[Result](hw.ResultDTM,
-		muss.MarshallerFn[Result](MarshalResultProtobuf),
-		muss.UnmarshallerFn[Result](UnmarshalResultProtobuf),
-		muss.SizerFn[Result](SizeResultProtobuf),
-		muss.SkipperFn(SkipResultProtobuf),
-	)
+		SayFancyHelloCmdProtobuf)
+	ResultDTS = dts.New[Result](hw.ResultDTM, ResultProtobuf)
 )
 
 func marshalCmd[T proto.Message](c T, w muss.Writer) (n int, err error) {
@@ -127,7 +130,7 @@ func marshalCmd[T proto.Message](c T, w muss.Writer) (n int, err error) {
 		return
 	}
 	l := len(bs)
-	n, err = varint.MarshalPositiveInt(l, w)
+	n, err = varint.PositiveInt.Marshal(l, w)
 	if err != nil {
 		return
 	}
@@ -138,7 +141,7 @@ func marshalCmd[T proto.Message](c T, w muss.Writer) (n int, err error) {
 
 func unmarshalCmd[T proto.Message](d T, v com.Validator[int],
 	r muss.Reader) (n int, err error) {
-	l, n, err := varint.UnmarshalPositiveInt(r)
+	l, n, err := varint.PositiveInt.Unmarshal(r)
 	if err != nil {
 		return
 	}

@@ -8,25 +8,26 @@ import (
 	"github.com/mus-format/mus-stream-go/ord"
 )
 
-func MarshalOldSayHelloCmdMUS(v OldSayHelloCmd, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(v.str, nil, w)
+var OldSayHelloCmdMUS = oldSayHelloCmdMUS{}
+
+type oldSayHelloCmdMUS struct{}
+
+func (s oldSayHelloCmdMUS) Marshal(v OldSayHelloCmd, w muss.Writer) (n int, err error) {
+	return ord.String.Marshal(v.str, w)
 }
 
-func UnmarshalOldSayHelloCmdMUS(r muss.Reader) (v OldSayHelloCmd, n int, err error) {
-	v.str, n, err = ord.UnmarshalString(nil, r)
+func (s oldSayHelloCmdMUS) Unmarshal(r muss.Reader) (v OldSayHelloCmd, n int, err error) {
+	v.str, n, err = ord.String.Unmarshal(r)
 	return
 }
 
-func SizeOldSayHelloCmdMUS(v OldSayHelloCmd) (size int) {
-	return ord.SizeString(v.str, nil)
+func (s oldSayHelloCmdMUS) Size(v OldSayHelloCmd) (size int) {
+	return ord.String.Size(v.str)
 }
 
-func SkipOldSayHelloCmdMUS(r muss.Reader) (n int, err error) {
-	return ord.SkipString(nil, r)
+func (s oldSayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
+	n, err = ord.String.Skip(r)
+	return
 }
 
-var OldSayHelloCmdDTS = dts.New[OldSayHelloCmd](OldSayHelloCmdDTM,
-	muss.MarshallerFn[OldSayHelloCmd](MarshalOldSayHelloCmdMUS),
-	muss.UnmarshallerFn[OldSayHelloCmd](UnmarshalOldSayHelloCmdMUS),
-	muss.SizerFn[OldSayHelloCmd](SizeOldSayHelloCmdMUS),
-	muss.SkipperFn(SkipOldSayHelloCmdMUS))
+var OldSayHelloCmdDTS = dts.New[OldSayHelloCmd](OldSayHelloCmdDTM, OldSayHelloCmdMUS)

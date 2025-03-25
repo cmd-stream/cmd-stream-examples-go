@@ -25,12 +25,12 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Greeter],
 	err error) {
 	// Using mus-stream-dts-go library unmarshal dtm.
-	dtm, _, err := dts.UnmarshalDTM(r)
+	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
 	}
-	// Depending on dtm, unmarshal a specific Command. You see the server cannot
-	// execute unexpected Commands with random behavior.
+	// Unmarshal a specific Command based on dtm. This ensures the server only
+	// executes expected Commands, preventing unintended behavior.
 	switch dtm {
 	case SayHelloCmdDTM:
 		cmd, _, err = SayHelloCmdDTS.UnmarshalData(r)

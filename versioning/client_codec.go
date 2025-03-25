@@ -28,7 +28,7 @@ func (c ClientCodec) Encode(cmd base.Cmd[OldGreeter], w transport.Writer) (
 // fails with an error, the client will be closed.
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
 	// Unmarshal dtm.
-	dtm, _, err := dts.UnmarshalDTM(r)
+	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
 	}

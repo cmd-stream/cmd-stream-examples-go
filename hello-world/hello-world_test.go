@@ -9,25 +9,22 @@ import (
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"
 )
 
-// To start using cmd-stream-go you have to:
-//   1. Implement the Command Pattern: define the Receiver, Commands, Results,
-//      and Invoker.
-//   2. Create server and client codecs.
-//   3. Configure the server.
-//   4. Configure the client.
+// This example demonstrates how to use cmd-stream-go.
 //
-// Commands must implement the base.Cmd interface, Results - base.Result.
-// Besides that the codec implementations require them both to implement the
-// Marshaller interface, that is used for encoding.
+// 1. Implement the Command Pattern:
+//   - Define the Receiver, Commands, Results, and Invoker.
+//   - Commands must implement base.Cmd interface.
+//   - Results must implement base.Result interface.
+//   - Both must implement the Marshaller interface (required for codecs).
 //
-// The Invoker must implement the handler.Invoker interface.
+// 2. Define Codecs:
+//   - Client codec must implement ccln.Codec interface.
+//   - Server codec must implement cser.Codec interface.
 //
-// Client and server codecs - the ccln.Codec and cser.Codec interfaces,
-// respectively.
+// 3. Create server and client:
+//   - Instantiate with the appropriate codecs.
 //
-// In this example, musgen-go is used to generate serialization code. Refer
-// to the gen/main.go file for details.
-
+// Note: This example uses musgen-go to generate MUS serialization code.
 func TestGreeting(t *testing.T) {
 	const addr = "127.0.0.1:9001"
 
@@ -58,19 +55,18 @@ func SendCmds(addr string, t *testing.T) {
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		sayHelloCmd := NewSayHelloCmd("world")
+		cmd := NewSayHelloCmd("world")
 		wantGreeting := "Hello world"
-		err = Exchange[Greeter, Result](sayHelloCmd, timeout, client, wantGreeting)
+		err = Exchange[Greeter, Result](cmd, timeout, client, wantGreeting)
 		assert_error.EqualError(err, nil, t)
 	}()
 	// Send SayFancyHelloCmd command.
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		sayFancyHelloCmd := NewSayFancyHelloCmd("world")
+		cmd := NewSayFancyHelloCmd("world")
 		wantGreeting := "Hello incredible world"
-		err = Exchange[Greeter, Result](sayFancyHelloCmd, timeout, client,
-			wantGreeting)
+		err = Exchange[Greeter, Result](cmd, timeout, client, wantGreeting)
 		assert_error.EqualError(err, nil, t)
 	}()
 	wgR.Wait()

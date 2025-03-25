@@ -13,26 +13,19 @@ import (
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"
 )
 
-// In this example, the client attempts to reconnect to the server when the
-// connection is lost.
-//
-// The client is created using the ccln.NewReconnect() function.
-
 const Addr = "127.0.0.1:9004"
 
-type connFactory struct{}
-
-func (f connFactory) New() (conn net.Conn, err error) {
-	time.Sleep(100 * time.Millisecond)
-	conn, err = net.Dial("tcp", Addr)
-	if err != nil {
-		log.Println("failed to reconnect")
-	} else {
-		log.Println("connected")
-	}
-	return
-}
-
+// In this example, the client attempts to reconnect to the server.
+//
+// The client may lose connection to the server in the following cases:
+//   - While sending a Command – Client.Send() will return an error.
+//   - While waiting for a Result – whether the Command was executed on the
+//     server remains unknown.
+//
+// In both cases, if the client.NewReconnect() constructor is used, we can try
+// to resend the Command (idempotent Command) after a while. If the client has
+// already successfully reconnected, normal operation will continue, otherwise
+// Client.Send() will return an error again.
 func TestReconnect(t *testing.T) {
 	// Start the server.
 	wgS := &sync.WaitGroup{}
@@ -81,4 +74,17 @@ func TestReconnect(t *testing.T) {
 	// Close the server.
 	err = hw.CloseServer(server, wgS)
 	assert_fatal.EqualError(err, nil, t)
+}
+
+type connFactory struct{}
+
+func (f connFactory) New() (conn net.Conn, err error) {
+	time.Sleep(100 * time.Millisecond)
+	conn, err = net.Dial("tcp", Addr)
+	if err != nil {
+		log.Println("failed to reconnect")
+	} else {
+		log.Println("connected")
+	}
+	return
 }

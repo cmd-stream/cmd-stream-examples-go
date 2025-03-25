@@ -16,7 +16,6 @@ import (
 //
 // After decoding, the server codec migrates the old version to the current one
 // so that the server can execute it.
-
 func TestVersionin(t *testing.T) {
 	const addr = "127.0.0.1:9008"
 

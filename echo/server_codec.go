@@ -10,13 +10,13 @@ import (
 type ServerCodec struct{}
 
 func (c ServerCodec) Encode(result base.Result, w transport.Writer) (err error) {
-	_, err = ord.MarshalString(string(result.(Result)), nil, w)
+	_, err = ord.String.Marshal(string(result.(Result)), w)
 	return
 }
 
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[struct{}],
 	err error) {
-	str, _, err := ord.UnmarshalString(nil, r)
+	str, _, err := ord.String.Unmarshal(r)
 	if err != nil {
 		return
 	}

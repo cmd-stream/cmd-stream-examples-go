@@ -38,7 +38,7 @@ func StartServer[T any](addr string, codec cser.Codec[T], receiver T,
 		return
 	}
 	adapter := listenerAdapter{tls.NewListener(l, &tlsConf), l.(*net.TCPListener)}
-	return hw.StartServerWithListener(addr, codec, receiver, adapter, wg)
+	return hw.StartServerWith(addr, codec, cser.NewInvoker(receiver), adapter, wg)
 }
 
 func CreateClient[T any](addr string, codec ccln.Codec[T]) (
@@ -53,11 +53,15 @@ func CreateClient[T any](addr string, codec ccln.Codec[T]) (
 	if err != nil {
 		return
 	}
-	unexpectedResultCallback := func(seq base.Seq, result base.Result) {
+
+	var callback bcln.UnexpectedResultCallback = func(seq base.Seq, result base.Result) {
 		fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
 			result)
 	}
-	return ccln.New(ccln.Conf{}, cser.DefaultServerInfo, codec, conn,
-		unexpectedResultCallback)
-	// return exmpls.CreateClientWith(cs_client.Conf{}, codec, conn)
+
+	return ccln.New(codec, conn,
+		ccln.WithBase(
+			bcln.WithUnexpectedResultCallback(callback),
+		),
+	)
 }

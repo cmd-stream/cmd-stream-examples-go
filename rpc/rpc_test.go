@@ -14,8 +14,7 @@ import (
 // The rpc example demonstrates how to implement RPC using cmd-stream-go.
 //
 // Here, you'll find a GreetingService with a SayHello method that sends the
-// corresponding SayHelloCmd command to the server.
-
+// corresponding SayHelloCmd to the server.
 func TestRPC(t *testing.T) {
 	const addr = "127.0.0.1:9005"
 

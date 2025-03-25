@@ -8,69 +8,70 @@ import (
 	"github.com/mus-format/mus-stream-go/ord"
 )
 
-func MarshalSayFancyHelloMultiCmdMUS(v SayFancyHelloMultiCmd, w muss.Writer) (n int, err error) {
-	return ord.MarshalString(v.str, nil, w)
+var SayFancyHelloMultiCmdMUS = sayFancyHelloMultiCmdMUS{}
+
+type sayFancyHelloMultiCmdMUS struct{}
+
+func (s sayFancyHelloMultiCmdMUS) Marshal(v SayFancyHelloMultiCmd, w muss.Writer) (n int, err error) {
+	return ord.String.Marshal(v.str, w)
 }
 
-func UnmarshalSayFancyHelloMultiCmdMUS(r muss.Reader) (v SayFancyHelloMultiCmd, n int, err error) {
-	v.str, n, err = ord.UnmarshalString(nil, r)
+func (s sayFancyHelloMultiCmdMUS) Unmarshal(r muss.Reader) (v SayFancyHelloMultiCmd, n int, err error) {
+	v.str, n, err = ord.String.Unmarshal(r)
 	return
 }
 
-func SizeSayFancyHelloMultiCmdMUS(v SayFancyHelloMultiCmd) (size int) {
-	return ord.SizeString(v.str, nil)
+func (s sayFancyHelloMultiCmdMUS) Size(v SayFancyHelloMultiCmd) (size int) {
+	return ord.String.Size(v.str)
 }
 
-func SkipSayFancyHelloMultiCmdMUS(r muss.Reader) (n int, err error) {
-	return ord.SkipString(nil, r)
+func (s sayFancyHelloMultiCmdMUS) Skip(r muss.Reader) (n int, err error) {
+	n, err = ord.String.Skip(r)
+	return
 }
 
-var SayFancyHelloMultiCmdDTS = dts.New[SayFancyHelloMultiCmd](SayFancyHelloMultiCmdDTM,
-	muss.MarshallerFn[SayFancyHelloMultiCmd](MarshalSayFancyHelloMultiCmdMUS),
-	muss.UnmarshallerFn[SayFancyHelloMultiCmd](UnmarshalSayFancyHelloMultiCmdMUS),
-	muss.SizerFn[SayFancyHelloMultiCmd](SizeSayFancyHelloMultiCmdMUS),
-	muss.SkipperFn(SkipSayFancyHelloMultiCmdMUS))
+var SayFancyHelloMultiCmdDTS = dts.New[SayFancyHelloMultiCmd](SayFancyHelloMultiCmdDTM, SayFancyHelloMultiCmdMUS)
 
-func MarshalResultMUS(v Result, w muss.Writer) (n int, err error) {
-	n, err = ord.MarshalString(v.str, nil, w)
+var ResultMUS = resultMUS{}
+
+type resultMUS struct{}
+
+func (s resultMUS) Marshal(v Result, w muss.Writer) (n int, err error) {
+	n, err = ord.String.Marshal(v.str, w)
 	if err != nil {
 		return
 	}
 	var n1 int
-	n1, err = ord.MarshalBool(v.lastOne, w)
+	n1, err = ord.Bool.Marshal(v.lastOne, w)
 	n += n1
 	return
 }
 
-func UnmarshalResultMUS(r muss.Reader) (v Result, n int, err error) {
-	v.str, n, err = ord.UnmarshalString(nil, r)
+func (s resultMUS) Unmarshal(r muss.Reader) (v Result, n int, err error) {
+	v.str, n, err = ord.String.Unmarshal(r)
 	if err != nil {
 		return
 	}
 	var n1 int
-	v.lastOne, n1, err = ord.UnmarshalBool(r)
+	v.lastOne, n1, err = ord.Bool.Unmarshal(r)
 	n += n1
 	return
 }
 
-func SizeResultMUS(v Result) (size int) {
-	size = ord.SizeString(v.str, nil)
-	return size + ord.SizeBool(v.lastOne)
+func (s resultMUS) Size(v Result) (size int) {
+	size = ord.String.Size(v.str)
+	return size + ord.Bool.Size(v.lastOne)
 }
 
-func SkipResultMUS(r muss.Reader) (n int, err error) {
-	n, err = ord.SkipString(nil, r)
+func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
+	n, err = ord.String.Skip(r)
 	if err != nil {
 		return
 	}
 	var n1 int
-	n1, err = ord.SkipBool(r)
+	n1, err = ord.Bool.Skip(r)
 	n += n1
 	return
 }
 
-var ResultDTS = dts.New[Result](ResultDTM,
-	muss.MarshallerFn[Result](MarshalResultMUS),
-	muss.UnmarshallerFn[Result](UnmarshalResultMUS),
-	muss.SizerFn[Result](SizeResultMUS),
-	muss.SkipperFn(SkipResultMUS))
+var ResultDTS = dts.New[Result](ResultDTM, ResultMUS)

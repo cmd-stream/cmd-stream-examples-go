@@ -6,28 +6,31 @@ import (
 
 	versioning "cmd-stream-examples-go/versioning"
 
-	"github.com/mus-format/musgen-go/basegen"
 	musgen "github.com/mus-format/musgen-go/mus"
+	genops "github.com/mus-format/musgen-go/options/generate"
 )
 
-// main function will generate the mus-format.gen.go file with MUS serialization
-// code for SayHelloCmd, SayFancyHelloCmd and Result.
+// The main function generates the mus-format.gen.go file containing
+// MUS serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewFileGenerator(basegen.Conf{
-		Package: "versioning",
-		Stream:  true, // We're going to generate streaming code.
-	})
+	g := musgen.NewFileGenerator(
+		genops.WithPackage("versioning"),
+		genops.WithStream(), // We're going to generate streaming code.
+	)
+
+	// OldSayHelloCmd.
+	t := reflect.TypeFor[versioning.OldSayHelloCmd]()
+	err := g.AddStruct(t)
 	if err != nil {
 		panic(err)
 	}
-	// With this call the generator will produce OldSayHelloCmdDTS variable, which
-	// helps to serialize/deserialize 'DTM + OldSayHelloCmd'. DTS stands for Data
-	// Type Metadata Support.
-	err = g.AddStructDTS(reflect.TypeFor[versioning.OldSayHelloCmd]())
+	err = g.AddDTS(t)
 	if err != nil {
 		panic(err)
 	}
+
+	// Generate.
 	bs, err := g.Generate()
 	if err != nil {
 		panic(err)

@@ -52,7 +52,7 @@ func (c SayHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	//    will also affect subsequent commands unless they update it with their
 	//    own value, by using the Proxy.SendWithDeadline() method.
 	//
-	//    So if one command uses the Proxy.SendWithDeadline() method, all others
+	//    So if one Command uses the Proxy.SendWithDeadline() method, all others
 	//    should do the same. Mixing Proxy.Send() and Proxy.SendWithDeadline() can
 	//    result in unpredictable behavior due to unintended deadline propagation.
 	//

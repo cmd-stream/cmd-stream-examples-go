@@ -22,7 +22,7 @@ func (c ClientCodec) Encode(cmd base.Cmd[Greeter], w transport.Writer) (
 
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
 	// Unmarshal DTM using the mus-stream-dts-go library.
-	dtm, _, err := dts.UnmarshalDTM(r)
+	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
 	}

@@ -16,13 +16,15 @@ import (
 //
 // The client is initialized with the following configuration:
 //
-//	conf := cs_client.Conf {
-//		Delegate: delegate_client.Conf{
-//			KeepaliveTime:  200 * time.Millisecond,
-//			KeepaliveIntvl: 200 * time.Millisecond,
-//		},
-//	}
-
+// ccln.New(codec, conn,
+//
+//	 ...
+//		ccln.WithKeepalive(
+//			dcln.WithKeepaliveTime(...),
+//			dcln.WithKeepaliveIntvl(...),
+//		),
+//
+// )
 func TestKeepalive(t *testing.T) {
 	const addr = "127.0.0.1:9003"
 

@@ -11,9 +11,8 @@ import (
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"
 )
 
-// In this example, you'll find a command (SayFancyHelloMultiCmd) that sends
-// multiple results back to the client.
-
+// In this example, you'll find a Command (SayFancyHelloMultiCmd) that sends
+// multiple Results back to the client.
 func TestServerStreaming(t *testing.T) {
 	const addr = "127.0.0.1:9006"
 

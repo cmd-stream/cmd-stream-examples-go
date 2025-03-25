@@ -10,15 +10,14 @@ import (
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"
 )
 
-// This example contains an implementation of an echo server.
-
+// A minimal example.
 func TestEcho(t *testing.T) {
 	const addr = "127.0.0.1:9000"
 
 	// Start the server.
 	l, err := net.Listen("tcp", addr)
 	assert_fatal.EqualError(err, nil, t)
-	server := cser.Default[struct{}](ServerCodec{}, struct{}{})
+	server := cser.New[struct{}](ServerCodec{}, cser.NewInvoker(struct{}{}))
 	go func() {
 		server.Serve(l.(*net.TCPListener))
 	}()
@@ -26,7 +25,7 @@ func TestEcho(t *testing.T) {
 	// Create the client.
 	conn, err := net.Dial("tcp", addr)
 	assert_fatal.EqualError(err, nil, t)
-	client, err := ccln.Default(ClientCodec{}, conn)
+	client, err := ccln.New(ClientCodec{}, conn)
 	assert_fatal.EqualError(err, nil, t)
 
 	// Send a Command and get the Result.

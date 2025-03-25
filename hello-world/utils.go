@@ -15,7 +15,7 @@ import (
 	"github.com/cmd-stream/handler-go"
 )
 
-// CmdSendDuration defines how long the client will try to send the command.
+// CmdSendDuration defines how long the client will try to send the Command.
 const CmdSendDuration = time.Second
 
 // CmdReceiveDuration specifies how long the server will wait for the next data
@@ -29,44 +29,48 @@ func StartServer[T any](addr string, codec cser.Codec[T], receiver T,
 	if err != nil {
 		return
 	}
-	return StartServerWithListener(addr, codec, receiver, l.(*net.TCPListener), wg)
+	invoker := cser.NewInvoker(receiver)
+	return StartServerWith(addr, codec, invoker, l.(*net.TCPListener), wg)
 }
 
-func StartServerWithListener[T any](addr string, codec cser.Codec[T], receiver T,
-	l base.Listener, wg *sync.WaitGroup) (server *bser.Server, err error) {
-	var (
-		// Server configuration.
-		conf = cser.Conf{
-			// Use Transport configuration to set the buffers size. If absent default
-			// values from the bufio package are used.
-			// Transport: transport_common.Conf{
-			// 	 WriterBufSize: ... ,
-			//   ReaderBufSize: ... ,
-			// },
-			Handler: handler.Conf{
-				CmdReceiveDuration: CmdReceiveDuration, // In a production environment, always
-				// set ReceiveTimeout. It allows the server to close inactive client
-				// connections.
+func StartServerWith[T any](addr string, codec cser.Codec[T],
+	invoker handler.Invoker[T],
+	l base.Listener,
+	wg *sync.WaitGroup,
+) (server *bser.Server, err error) {
+	var callback bser.LostConnCallback = func(addr net.Addr, err error) {
+		fmt.Printf("lost connection to %v, cause %v\n", addr, err)
+	}
+	server = cser.New(codec, invoker,
+		// ServerInfo is optional and helps the client verify compatibility with the
+		// server. It can identify supported commands or other server-specific
+		// details. As a byte slice, it can store any arbitrary data.
+		// cser.WithServerInfo(info)
 
-				At: true, // Commands will receive not nill 'at' parameter.
-			},
-			Base: bser.Conf{
-				WorkersCount: 8, // Determines the number of Workers, i.e., the number
-				// of simultaneous connections to the server.
-			},
-		}
-		// ServerInfo allows the client to verify compatibility with the server.
-		// For example, ServerInfo can identify the set of commands supported by the
-		// server. It is just a slice of bytes, so can hold any value.
-		info    = cser.DefaultServerInfo
-		invoker = NewInvoker(receiver)
-		// LostConnCallback is useful for debugging, it is called by the server
-		// when the connection to the client is lost.
-		callback bser.LostConnCallback = func(addr net.Addr, err error) {
-			fmt.Printf("lost connection to %v, cause %v\n", addr, err)
-		}
+		// Use Transport configuration to set the buffers size. If absent default
+		// values from the bufio package are used.
+		// cser.WithTransport(
+		//   tcom.WithWriterBufSize(wsize),
+		//   tcom.WithReaderBufSize(rsize)
+		// )
+
+		cser.WithHandler(
+			// In a production environment, always set CmdReceiveTimeout. It allows
+			// the server to close inactive client connections.
+			handler.WithCmdReceiveDuration(CmdReceiveDuration),
+			handler.WithAt(),
+		),
+
+		cser.WithBase(
+			// WorkersCount determines the number of Workers, i.e., the number of
+			// simultaneous connections to the server.
+			bser.WithWorkersCount(8),
+
+			// LostConnCallback is useful for debugging, it is called by the server
+			// when the connection to the client is lost.
+			bser.WithLostConnCallback(callback),
+		),
 	)
-	server = cser.New(conf, info, codec, invoker, callback)
 
 	wg.Add(1)
 	go func(wg *sync.WaitGroup, listener base.Listener,
@@ -85,24 +89,26 @@ func CreateClient[T any](addr string, codec ccln.Codec[T]) (
 	if err != nil {
 		return
 	}
-	var (
-		conf = ccln.Conf{
-			// Use Transport configuration to set the buffers size. If absent default
-			// values from the bufio package are used.
-			// Transport tcom.Conf{
-			// 	 WriterBufSize: ... ,
-			// 	 ReaderBufSize: ... ,
-			// }
-		}
-		// callback handles unexpected results from the server. If you call
-		// Client.Forget(seq) for a command, its results will be handled by
-		// this function.
-		callback bcln.UnexpectedResultCallback = func(seq base.Seq, result base.Result) {
-			fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
-				result)
-		}
+	var callback bcln.UnexpectedResultCallback = func(seq base.Seq,
+		result base.Result) {
+		fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
+			result)
+	}
+	return ccln.New(codec, conn,
+		// Use Transport configuration to set the buffers size. If absent default
+		// values from the bufio package are used.
+		// ccln.WithTransport(
+		// 	tcom.WithWriterBufSize(wsize),
+		// 	tcom.WithReaderBufSize(rsize),
+		// ),
+
+		ccln.WithBase(
+			// UnexpectedResultCallback handles unexpected results from the server. If
+			// you call Client.Forget(seq) for a command, its results will be handled
+			// by this function.
+			bcln.WithUnexpectedResultCallback(callback),
+		),
 	)
-	return ccln.New(conf, cser.DefaultServerInfo, codec, conn, callback)
 }
 
 // CloseServer closes the server.

@@ -6,44 +6,66 @@ import (
 
 	hw "cmd-stream-examples-go/hello-world"
 
-	"github.com/mus-format/musgen-go/basegen"
 	musgen "github.com/mus-format/musgen-go/mus"
+	genops "github.com/mus-format/musgen-go/options/generate"
+	structops "github.com/mus-format/musgen-go/options/struct"
+	typeops "github.com/mus-format/musgen-go/options/type"
 )
 
-// main function generates the mus-format.gen.go file with MUS serialization
-// code for SayHelloCmd, SayFancyHelloCmd and Result.
+// The main function generates the mus-format.gen.go file containing
+// MUS serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewFileGenerator(basegen.Conf{
-		Package: "hw",
-		Stream:  true, // We're going to generate streaming code.
-	})
+	g := musgen.NewFileGenerator(
+		genops.WithPackage("hw"),
+		genops.WithStream(),
+	)
+
+	// SayHelloCmd.
+	t := reflect.TypeFor[hw.SayHelloCmd]()
+	err := g.AddStruct(t,
+		// Specifies options for the first field.
+		structops.WithField(
+			// Specifies the length validator for the first field.
+			typeops.WithLenValidator("ValidateLength"), // Where ValidateLength is the function name.
+		),
+	)
 	if err != nil {
 		panic(err)
 	}
-	// These options specify a validator for the first string field of the structure.
-	opts := basegen.StructOptions{
-		basegen.StringFieldOptions{
-			StringOptions: basegen.StringOptions{
-				LenValidator: "ValidateLength", // Where ValidateLength is the function name.
-			},
-		},
-	}
-	// With this call the generator will produce SayHelloCmdDTS variable, which
-	// helps to serialize/deserialize 'DTM + SayHelloCmd'. DTS stands for Data
-	// Type Metadata Support.
-	err = g.AddStructDTSWith(reflect.TypeFor[hw.SayHelloCmd](), "", opts)
+	// This call instructs the generator to produce the SayHelloCmdDTS variable,
+	// which facilitates the serialization and deserialization of 'DTM + SayHelloCmd'.
+	// DTS stands for Data Type Metadata Support.
+	err = g.AddDTS(t)
 	if err != nil {
 		panic(err)
 	}
-	err = g.AddStructDTSWith(reflect.TypeFor[hw.SayFancyHelloCmd](), "", opts)
+
+	// SayFancyHelloCmd.
+	t = reflect.TypeFor[hw.SayFancyHelloCmd]()
+	err = g.AddStruct(t, structops.WithField(
+		typeops.WithLenValidator("ValidateLength"),
+	))
 	if err != nil {
 		panic(err)
 	}
-	err = g.AddStructDTS(reflect.TypeFor[hw.Result]())
+	err = g.AddDTS(t)
 	if err != nil {
 		panic(err)
 	}
+
+	// Result.
+	t = reflect.TypeFor[hw.Result]()
+	err = g.AddStruct(t)
+	if err != nil {
+		panic(err)
+	}
+	err = g.AddDTS(t)
+	if err != nil {
+		panic(err)
+	}
+
+	// Generate.
 	bs, err := g.Generate()
 	if err != nil {
 		panic(err)
