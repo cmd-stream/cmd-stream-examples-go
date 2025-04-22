@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	assert_error "github.com/ymz-ncnk/assert/error"
 	assert_fatal "github.com/ymz-ncnk/assert/fatal"

@@ -1,10 +1,11 @@
-package server_streaming
+package streaming
 
 import (
-	hw "cmd-stream-examples-go/hello-world"
 	"errors"
 	"fmt"
 	"time"
+
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	"github.com/cmd-stream/base-go"
 	bcln "github.com/cmd-stream/base-go/client"

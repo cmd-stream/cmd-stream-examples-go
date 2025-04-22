@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 
-	server_streaming "cmd-stream-examples-go/server-streaming"
+	server_streaming "github.com/cmd-stream/cmd-stream-examples-go/server-streaming"
 
 	musgen "github.com/mus-format/musgen-go/mus"
 	genops "github.com/mus-format/musgen-go/options/generate"
@@ -14,14 +14,17 @@ import (
 // serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
 func main() {
 	// Create a generator.
-	g := musgen.NewFileGenerator(
-		genops.WithPackage("server_streaming"),
-		genops.WithStream(),
-	)
+	g, err := musgen.NewFileGenerator(
+		genops.WithPkgPath("github.com/cmd-stream/cmd-stream-examples-go/server-streaming"),
+		genops.WithPackage("streaming"),
+		genops.WithStream())
+	if err != nil {
+		panic(err)
+	}
 
 	// SayFancyHelloMultiCmd.
 	t := reflect.TypeFor[server_streaming.SayFancyHelloMultiCmd]()
-	err := g.AddStruct(t)
+	err = g.AddStruct(t)
 	if err != nil {
 		panic(err)
 	}

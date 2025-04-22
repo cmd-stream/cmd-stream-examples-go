@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	"github.com/cmd-stream/base-go"
 	dcodec "github.com/cmd-stream/dtm-codec-go"

@@ -4,12 +4,12 @@ import (
 	"io"
 
 	com "github.com/mus-format/common-go"
-	dts "github.com/mus-format/mus-stream-dts-go"
+	dts "github.com/mus-format/dts-stream-go"
 	muss "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/varint"
 	"google.golang.org/protobuf/proto"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 )
 
 // SayHelloCmd

@@ -6,7 +6,7 @@ import (
 
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
-	dts "github.com/mus-format/mus-stream-dts-go"
+	dts "github.com/mus-format/dts-stream-go"
 )
 
 type ClientCodec struct{}
@@ -21,7 +21,7 @@ func (c ClientCodec) Encode(cmd base.Cmd[Greeter], w transport.Writer) (
 }
 
 func (c ClientCodec) Decode(r transport.Reader) (result base.Result, err error) {
-	// Unmarshal DTM using the mus-stream-dts-go library.
+	// Unmarshal DTM using the dts-stream-go library.
 	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return

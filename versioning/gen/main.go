@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 
-	versioning "cmd-stream-examples-go/versioning"
+	versioning "github.com/cmd-stream/cmd-stream-examples-go/versioning"
 
 	musgen "github.com/mus-format/musgen-go/mus"
 	genops "github.com/mus-format/musgen-go/options/generate"
@@ -14,14 +14,18 @@ import (
 // MUS serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
 func main() {
 	// Create a generator.
-	g := musgen.NewFileGenerator(
+	g, err := musgen.NewFileGenerator(
+		genops.WithPkgPath("github.com/cmd-stream/cmd-stream-examples-go/versioning"),
 		genops.WithPackage("versioning"),
 		genops.WithStream(), // We're going to generate streaming code.
 	)
+	if err != nil {
+		panic(err)
+	}
 
 	// OldSayHelloCmd.
 	t := reflect.TypeFor[versioning.OldSayHelloCmd]()
-	err := g.AddStruct(t)
+	err = g.AddStruct(t)
 	if err != nil {
 		panic(err)
 	}

@@ -4,14 +4,14 @@ package hw
 
 import (
 	com "github.com/mus-format/common-go"
-	dts "github.com/mus-format/mus-stream-dts-go"
+	dts "github.com/mus-format/dts-stream-go"
 	muss "github.com/mus-format/mus-stream-go"
 	strops "github.com/mus-format/mus-stream-go/options/string"
 	"github.com/mus-format/mus-stream-go/ord"
 )
 
 var (
-	stringsZKqPcRsAp3lHPBOheW7mAΞΞ = ord.NewValidStringSer(strops.WithLenValidator(com.ValidatorFn[int](ValidateLength)))
+	stringb33HpΣ4yL80NxXhRDly6fAΞΞ = ord.NewValidStringSer(strops.WithLenValidator(com.ValidatorFn[int](ValidateLength)))
 )
 
 var SayHelloCmdMUS = sayHelloCmdMUS{}
@@ -19,20 +19,20 @@ var SayHelloCmdMUS = sayHelloCmdMUS{}
 type sayHelloCmdMUS struct{}
 
 func (s sayHelloCmdMUS) Marshal(v SayHelloCmd, w muss.Writer) (n int, err error) {
-	return stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Marshal(v.str, w)
+	return stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Marshal(v.str, w)
 }
 
 func (s sayHelloCmdMUS) Unmarshal(r muss.Reader) (v SayHelloCmd, n int, err error) {
-	v.str, n, err = stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Unmarshal(r)
+	v.str, n, err = stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayHelloCmdMUS) Size(v SayHelloCmd) (size int) {
-	return stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Size(v.str)
+	return stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Size(v.str)
 }
 
 func (s sayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Skip(r)
+	n, err = stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Skip(r)
 	return
 }
 
@@ -43,20 +43,20 @@ var SayFancyHelloCmdMUS = sayFancyHelloCmdMUS{}
 type sayFancyHelloCmdMUS struct{}
 
 func (s sayFancyHelloCmdMUS) Marshal(v SayFancyHelloCmd, w muss.Writer) (n int, err error) {
-	return stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Marshal(v.str, w)
+	return stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Marshal(v.str, w)
 }
 
 func (s sayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v SayFancyHelloCmd, n int, err error) {
-	v.str, n, err = stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Unmarshal(r)
+	v.str, n, err = stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayFancyHelloCmdMUS) Size(v SayFancyHelloCmd) (size int) {
-	return stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Size(v.str)
+	return stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Size(v.str)
 }
 
 func (s sayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = stringsZKqPcRsAp3lHPBOheW7mAΞΞ.Skip(r)
+	n, err = stringb33HpΣ4yL80NxXhRDly6fAΞΞ.Skip(r)
 	return
 }
 

@@ -1,7 +1,7 @@
 package hwp
 
 import (
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 	"context"
 	"time"
 

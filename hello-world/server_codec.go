@@ -6,7 +6,7 @@ import (
 
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
-	dts "github.com/mus-format/mus-stream-dts-go"
+	dts "github.com/mus-format/dts-stream-go"
 )
 
 // A single ServerCodec instance is shared by all server Workers (each Worker
@@ -24,7 +24,7 @@ func (c ServerCodec) Encode(result base.Result, w transport.Writer) (
 
 func (c ServerCodec) Decode(r transport.Reader) (cmd base.Cmd[Greeter],
 	err error) {
-	// Using mus-stream-dts-go library unmarshal dtm.
+	// Using dts-stream-go library unmarshal dtm.
 	dtm, _, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return

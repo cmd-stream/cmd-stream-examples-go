@@ -7,7 +7,7 @@ import (
 	"github.com/cmd-stream/base-go"
 	"github.com/cmd-stream/transport-go"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 )
 
 // NewOldSayHelloCmd creates a new OldSayHelloCmd.

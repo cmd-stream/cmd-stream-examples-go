@@ -3,12 +3,12 @@ package versioning
 import (
 	"errors"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	"github.com/cmd-stream/base-go"
 
 	"github.com/cmd-stream/transport-go"
-	dts "github.com/mus-format/mus-stream-dts-go"
+	dts "github.com/mus-format/dts-stream-go"
 )
 
 type ClientCodec struct{}

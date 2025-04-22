@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	musgen "github.com/mus-format/musgen-go/mus"
 	genops "github.com/mus-format/musgen-go/options/generate"
@@ -16,14 +16,18 @@ import (
 // MUS serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
 func main() {
 	// Create a generator.
-	g := musgen.NewFileGenerator(
+	g, err := musgen.NewFileGenerator(
+		genops.WithPkgPath("github.com/cmd-stream/cmd-stream-examples-go/hello-world"),
 		genops.WithPackage("hw"),
 		genops.WithStream(),
 	)
+	if err != nil {
+		panic(err)
+	}
 
 	// SayHelloCmd.
 	t := reflect.TypeFor[hw.SayHelloCmd]()
-	err := g.AddStruct(t,
+	err = g.AddStruct(t,
 		// Specifies options for the first field.
 		structops.WithField(
 			// Specifies the length validator for the first field.

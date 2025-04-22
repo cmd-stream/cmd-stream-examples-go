@@ -1,4 +1,4 @@
-package server_streaming
+package streaming
 
 import "github.com/cmd-stream/transport-go"
 

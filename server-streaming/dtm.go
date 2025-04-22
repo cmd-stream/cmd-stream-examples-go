@@ -1,5 +1,5 @@
 //go:generate go run gen/main.go
-package server_streaming
+package streaming
 
 import (
 	com "github.com/mus-format/common-go"

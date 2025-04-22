@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	hw "cmd-stream-examples-go/hello-world"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
 	"github.com/cmd-stream/base-go"
 	bcln "github.com/cmd-stream/base-go/client"
