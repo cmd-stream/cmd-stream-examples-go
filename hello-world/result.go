@@ -5,9 +5,7 @@ import (
 	muss "github.com/mus-format/mus-stream-go"
 )
 
-const (
-	GreetingDTM com.DTM = iota
-)
+const GreetingDTM com.DTM = iota
 
 type Greeting string
 

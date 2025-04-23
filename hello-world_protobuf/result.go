@@ -27,8 +27,3 @@ func (c Greeting) MarshalTypedProtobuf(w muss.Writer) (n int, err error) {
 func (c Greeting) SizeTypedProtobuf() (size int) {
 	return GreetingDTS.Size(c)
 }
-
-// func (c Greeting) Marshal(w transport.Writer) (err error) {
-// 	_, err = ResultDTS.Marshal(c, w)
-// 	return
-// }
