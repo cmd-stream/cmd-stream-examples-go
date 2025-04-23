@@ -56,8 +56,6 @@ func main() {
 
 	// Generate.
 	bs, err := g.Generate()
-	// fmt.Println(string(err.(*musgen.TmplEngineError).ByteSlice()))
-	// fmt.Println(string(err.(*musgen.TmplEngineError).Error()))
 	assert.EqualError(err, nil)
 	err = os.WriteFile("./mus-format.gen.go", bs, 0755)
 	assert.EqualError(err, nil)
