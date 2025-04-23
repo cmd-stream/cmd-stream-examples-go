@@ -2,10 +2,17 @@ package hw
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/cmd-stream/base-go"
-	"github.com/cmd-stream/transport-go"
+	com "github.com/mus-format/common-go"
+	muss "github.com/mus-format/mus-stream-go"
+)
+
+const (
+	SayHelloCmdDTM com.DTM = iota
+	SayFancyHelloCmdDTM
 )
 
 // CmdExecDuration defines the expected duration of a Command execution.
@@ -35,9 +42,7 @@ func (c SayHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	// Regardless of the case, the final Result should have Result.LastOne() == true.
 
 	var (
-		result = NewResult(
-			receiver.Join(receiver.Interjection(), c.str),
-		)
+		result = Greeting(receiver.Join(receiver.Interjection(), c.str))
 		// Limiting the execution time of a Command on the server is considered a
 		// good practice that can be achieved with a deadline.
 		deadline = at.Add(CmdExecDuration)
@@ -97,7 +102,7 @@ func (c SayFancyHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	receiver Greeter, proxy base.Proxy) error {
 	// SayFancyHelloCmd differs from SayHelloCmd in the way it uses the Receiver.
 	var (
-		result = NewResult(
+		result = Greeting(
 			receiver.Join(receiver.Interjection(), receiver.Adjective(), c.str),
 		)
 		deadline = at.Add(CmdExecDuration)
@@ -105,13 +110,26 @@ func (c SayFancyHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 	return proxy.SendWithDeadline(deadline, seq, result)
 }
 
-func (c SayHelloCmd) Marshal(w transport.Writer) (err error) {
-	_, err = SayHelloCmdDTS.Marshal(c, w) // The Command will be marshalled as
+func (c SayHelloCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+	return SayHelloCmdDTS.Marshal(c, w) // The Command will be marshalled as
 	// 'DTM + command data'.
-	return
 }
 
-func (c SayFancyHelloCmd) Marshal(w transport.Writer) (err error) {
-	_, err = SayFancyHelloCmdDTS.Marshal(c, w)
+func (c SayHelloCmd) SizeTypedMUS() (size int) {
+	return SayHelloCmdDTS.Size(c)
+}
+
+func (c SayFancyHelloCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+	return SayFancyHelloCmdDTS.Marshal(c, w)
+}
+
+func (c SayFancyHelloCmd) SizeTypedMUS() (size int) {
+	return SayFancyHelloCmdDTS.Size(c)
+}
+
+func ValidateLength(length int) (err error) {
+	if length > 10 {
+		return errors.New("length is too large")
+	}
 	return
 }

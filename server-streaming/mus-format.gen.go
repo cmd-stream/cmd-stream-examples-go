@@ -3,6 +3,10 @@
 package streaming
 
 import (
+	"fmt"
+
+	"github.com/cmd-stream/base-go"
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 	dts "github.com/mus-format/dts-stream-go"
 	muss "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/ord"
@@ -32,11 +36,67 @@ func (s sayFancyHelloMultiCmdMUS) Skip(r muss.Reader) (n int, err error) {
 
 var SayFancyHelloMultiCmdDTS = dts.New[SayFancyHelloMultiCmd](SayFancyHelloMultiCmdDTM, SayFancyHelloMultiCmdMUS)
 
-var ResultMUS = resultMUS{}
+var CmdMUS = cmdMUS{}
 
-type resultMUS struct{}
+type cmdMUS struct{}
 
-func (s resultMUS) Marshal(v Result, w muss.Writer) (n int, err error) {
+func (s cmdMUS) Marshal(v base.Cmd[hw.Greeter], w muss.Writer) (n int, err error) {
+	switch t := v.(type) {
+	case SayFancyHelloMultiCmd:
+		return SayFancyHelloMultiCmdDTS.Marshal(t, w)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
+}
+
+func (s cmdMUS) Unmarshal(r muss.Reader) (v base.Cmd[hw.Greeter], n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case SayFancyHelloMultiCmdDTM:
+		v, n1, err = SayFancyHelloMultiCmdDTS.UnmarshalData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}
+
+func (s cmdMUS) Size(v base.Cmd[hw.Greeter]) (size int) {
+	switch t := v.(type) {
+	case SayFancyHelloMultiCmd:
+		return SayFancyHelloMultiCmdDTS.Size(t)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
+}
+
+func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case SayFancyHelloMultiCmdDTM:
+		n1, err = SayFancyHelloMultiCmdDTS.SkipData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}
+
+var GreetingMUS = greetingMUS{}
+
+type greetingMUS struct{}
+
+func (s greetingMUS) Marshal(v Greeting, w muss.Writer) (n int, err error) {
 	n, err = ord.String.Marshal(v.str, w)
 	if err != nil {
 		return
@@ -47,7 +107,7 @@ func (s resultMUS) Marshal(v Result, w muss.Writer) (n int, err error) {
 	return
 }
 
-func (s resultMUS) Unmarshal(r muss.Reader) (v Result, n int, err error) {
+func (s greetingMUS) Unmarshal(r muss.Reader) (v Greeting, n int, err error) {
 	v.str, n, err = ord.String.Unmarshal(r)
 	if err != nil {
 		return
@@ -58,12 +118,12 @@ func (s resultMUS) Unmarshal(r muss.Reader) (v Result, n int, err error) {
 	return
 }
 
-func (s resultMUS) Size(v Result) (size int) {
+func (s greetingMUS) Size(v Greeting) (size int) {
 	size = ord.String.Size(v.str)
 	return size + ord.Bool.Size(v.lastOne)
 }
 
-func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
+func (s greetingMUS) Skip(r muss.Reader) (n int, err error) {
 	n, err = ord.String.Skip(r)
 	if err != nil {
 		return
@@ -74,4 +134,60 @@ func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
 	return
 }
 
-var ResultDTS = dts.New[Result](ResultDTM, ResultMUS)
+var GreetingDTS = dts.New[Greeting](GreetingDTM, GreetingMUS)
+
+var ResultMUS = resultMUS{}
+
+type resultMUS struct{}
+
+func (s resultMUS) Marshal(v base.Result, w muss.Writer) (n int, err error) {
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Marshal(t, w)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
+}
+
+func (s resultMUS) Unmarshal(r muss.Reader) (v base.Result, n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case GreetingDTM:
+		v, n1, err = GreetingDTS.UnmarshalData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}
+
+func (s resultMUS) Size(v base.Result) (size int) {
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Size(t)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
+}
+
+func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case GreetingDTM:
+		n1, err = GreetingDTS.SkipData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}

@@ -10,8 +10,6 @@ is one example):
 - reconnect: Demonstrates how the client can reconnect to the server after
   losing the connection.
 - server-streaming: An example where the Command sends back multiple Results.
-- versioning: Shows how the server can handle different versions of the same 
-  Command.
 - rpc: Demonstrates how to implement RPC using cmd-stream-go.
 - tls: Shows how to use cmd-stream-go with TLS.
 

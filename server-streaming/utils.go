@@ -36,7 +36,7 @@ func Exchange[T any](cmd base.Cmd[T], timeout time.Duration,
 			if asyncResult.Error != nil {
 				return asyncResult.Error
 			}
-			greeting := asyncResult.Result.(Result).Str()
+			greeting := asyncResult.Result.(Greeting).String()
 			if greeting != wantStrs[i] {
 				return fmt.Errorf("unexpected greeting, want %v actual %v", wantStrs[i],
 					greeting)

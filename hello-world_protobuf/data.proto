@@ -3,7 +3,7 @@ package protobuf;
 
 option go_package = "github.com/cmd-stream/cmd-stream-examples-go/hello-world_protobuf/hwp";
 
-// protoc --go_out=. --go_opt=paths=source_relative ./hello-world_protobuf/cmd_data.proto
+// protoc --go_out=. --go_opt=paths=source_relative ./hello-world_protobuf/data.proto
 
 message SayHelloData {
   string str = 1;
@@ -13,6 +13,6 @@ message SayFancyHelloData {
   string str = 1;
 }
 
-message ResultData {
+message GreetingData {
   string str = 1;
 }

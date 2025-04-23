@@ -7,8 +7,9 @@ import (
 
 	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
-	assert_error "github.com/ymz-ncnk/assert/error"
-	assert_fatal "github.com/ymz-ncnk/assert/fatal"
+	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	asserterror "github.com/ymz-ncnk/assert/error"
+	assertfatal "github.com/ymz-ncnk/assert/fatal"
 )
 
 // cmd-stream-go + TLS protocol.
@@ -16,22 +17,28 @@ func TestTLS(t *testing.T) {
 	const addr = "127.0.0.1:9007"
 
 	// Start the server.
-	wgS := &sync.WaitGroup{}
-	server, err := StartServer(addr, hw.ServerCodec{},
-		hw.NewGreeter("Hello", "incredible", " "), wgS)
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		receiver = hw.NewGreeter("Hello", "incredible", " ")
+		codec    = cdc.NewServerCodec(hw.ResultMUS, hw.CmdMUS)
+		wgS      = &sync.WaitGroup{}
+	)
+	server, err := StartServer(addr, codec, receiver, wgS)
+	assertfatal.EqualError(err, nil, t)
 
 	SendCmd(addr, t)
 
 	// Close the server.
 	err = hw.CloseServer(server, wgS)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 }
 
 func SendCmd(addr string, t *testing.T) {
 	// Create the client.
-	client, err := CreateClient[hw.Greeter](addr, hw.ClientCodec{})
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		codec = cdc.NewClientCodec(hw.CmdMUS, hw.ResultMUS)
+	)
+	client, err := CreateClient[hw.Greeter](addr, codec)
+	assertfatal.EqualError(err, nil, t)
 
 	var (
 		wgR     = &sync.WaitGroup{}
@@ -41,15 +48,17 @@ func SendCmd(addr string, t *testing.T) {
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		sayHelloCmd := hw.NewSayHelloCmd("world")
-		wantGreeting := "Hello world"
-		err = hw.Exchange[hw.Greeter, hw.Result](sayHelloCmd, timeout, client,
+		var (
+			sayHelloCmd  = hw.NewSayHelloCmd("world")
+			wantGreeting = hw.Greeting("Hello world")
+		)
+		err = hw.Exchange[hw.Greeter, hw.Greeting](sayHelloCmd, timeout, client,
 			wantGreeting)
-		assert_error.EqualError(err, nil, t)
+		asserterror.EqualError(err, nil, t)
 	}()
 	wgR.Wait()
 
 	// Close the client.
 	err = hw.CloseClient[hw.Greeter](client)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 }

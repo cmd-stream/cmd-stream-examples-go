@@ -145,15 +145,16 @@ func CloseClient[T any](client *bcln.Client[T]) (err error) {
 	}
 }
 
-type GreetingResult interface {
-	Greeting() string
-}
+// type GreetingResult interface {
+// 	Greeting() string
+// }
 
 // Exchange sends a Command and checks whether the received greeting matches the
 // expected value.
-func Exchange[T any, R GreetingResult](cmd base.Cmd[T], timeout time.Duration,
+func Exchange[T any, R interface{ String() string }](cmd base.Cmd[T],
+	timeout time.Duration,
 	client *bcln.Client[T],
-	wantGreeting string,
+	wantGreeting R,
 ) (err error) {
 	// Send the Command.
 	var (
@@ -180,8 +181,8 @@ func Exchange[T any, R GreetingResult](cmd base.Cmd[T], timeout time.Duration,
 	if asyncResult.Error != nil {
 		return asyncResult.Error
 	}
-	greeting := asyncResult.Result.(R).Greeting()
-	if greeting != wantGreeting {
+	greeting := asyncResult.Result.(R)
+	if greeting.String() != wantGreeting.String() {
 		return fmt.Errorf("unexpected greeting, want %v actual %v", wantGreeting,
 			greeting)
 	}

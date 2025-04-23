@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
-	assert_error "github.com/ymz-ncnk/assert/error"
-	assert_fatal "github.com/ymz-ncnk/assert/fatal"
+	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	asserterror "github.com/ymz-ncnk/assert/error"
+	assertfatal "github.com/ymz-ncnk/assert/fatal"
 )
 
 // This example demonstrates how to use cmd-stream-go.
@@ -29,23 +30,29 @@ func TestGreeting(t *testing.T) {
 	const addr = "127.0.0.1:9001"
 
 	// Start the server.
-	wgS := &sync.WaitGroup{}
-	receiver := NewGreeter("Hello", "incredible", " ")
-	server, err := StartServer(addr, ServerCodec{}, receiver, wgS)
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		receiver = NewGreeter("Hello", "incredible", " ")
+		codec    = cdc.NewServerCodec(ResultMUS, CmdMUS)
+		wgS      = &sync.WaitGroup{}
+	)
+	server, err := StartServer(addr, codec, receiver, wgS)
+	assertfatal.EqualError(err, nil, t)
 
 	SendCmds(addr, t)
 
 	// Close the server.
 	err = CloseServer(server, wgS)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 }
 
 // SendCmds sends two commands concurrently using a single client.
 func SendCmds(addr string, t *testing.T) {
 	// Create the client.
-	client, err := CreateClient[Greeter](addr, ClientCodec{})
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		codec = cdc.NewClientCodec(CmdMUS, ResultMUS)
+	)
+	client, err := CreateClient[Greeter](addr, codec)
+	assertfatal.EqualError(err, nil, t)
 
 	var (
 		wgR     = &sync.WaitGroup{}
@@ -55,23 +62,27 @@ func SendCmds(addr string, t *testing.T) {
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		cmd := NewSayHelloCmd("world")
-		wantGreeting := "Hello world"
-		err = Exchange[Greeter, Result](cmd, timeout, client, wantGreeting)
-		assert_error.EqualError(err, nil, t)
+		var (
+			cmd                   = NewSayHelloCmd("world")
+			wantGreeting Greeting = "Hello world"
+		)
+		err = Exchange[Greeter, Greeting](cmd, timeout, client, wantGreeting)
+		asserterror.EqualError(err, nil, t)
 	}()
 	// Send SayFancyHelloCmd command.
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		cmd := NewSayFancyHelloCmd("world")
-		wantGreeting := "Hello incredible world"
-		err = Exchange[Greeter, Result](cmd, timeout, client, wantGreeting)
-		assert_error.EqualError(err, nil, t)
+		var (
+			cmd                   = NewSayFancyHelloCmd("world")
+			wantGreeting Greeting = "Hello incredible world"
+		)
+		err = Exchange[Greeter, Greeting](cmd, timeout, client, wantGreeting)
+		asserterror.EqualError(err, nil, t)
 	}()
 	wgR.Wait()
 
 	// Close the client.
 	err = CloseClient[Greeter](client)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 }

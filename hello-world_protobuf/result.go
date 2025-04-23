@@ -1,26 +1,34 @@
 package hwp
 
-import "github.com/cmd-stream/transport-go"
+import muss "github.com/mus-format/mus-stream-go"
 
-func NewResult(str string) Result {
-	return Result{
-		ResultData: &ResultData{Str: str},
+func NewGreeting(str string) Greeting {
+	return Greeting{
+		GreetingData: &GreetingData{Str: str},
 	}
 }
 
-type Result struct {
-	*ResultData
+type Greeting struct {
+	*GreetingData
 }
 
-func (r Result) Greeting() string {
-	return r.ResultData.Str
+func (r Greeting) String() string {
+	return r.GreetingData.Str
 }
 
-func (r Result) LastOne() bool {
+func (r Greeting) LastOne() bool {
 	return true
 }
 
-func (c Result) Marshal(w transport.Writer) (err error) {
-	_, err = ResultDTS.Marshal(c, w)
-	return
+func (c Greeting) MarshalTypedProtobuf(w muss.Writer) (n int, err error) {
+	return GreetingDTS.Marshal(c, w)
 }
+
+func (c Greeting) SizeTypedProtobuf() (size int) {
+	return GreetingDTS.Size(c)
+}
+
+// func (c Greeting) Marshal(w transport.Writer) (err error) {
+// 	_, err = ResultDTS.Marshal(c, w)
+// 	return
+// }

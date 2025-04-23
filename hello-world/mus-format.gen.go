@@ -3,8 +3,13 @@
 package hw
 
 import (
+	"fmt"
+	"reflect"
+
+	"github.com/cmd-stream/base-go"
 	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-stream-go"
+	exts "github.com/mus-format/ext-mus-stream-go"
 	muss "github.com/mus-format/mus-stream-go"
 	strops "github.com/mus-format/mus-stream-go/options/string"
 	"github.com/mus-format/mus-stream-go/ord"
@@ -62,26 +67,141 @@ func (s sayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
 
 var SayFancyHelloCmdDTS = dts.New[SayFancyHelloCmd](SayFancyHelloCmdDTM, SayFancyHelloCmdMUS)
 
+var CmdMUS = cmdMUS{}
+
+type cmdMUS struct{}
+
+func (s cmdMUS) Marshal(v base.Cmd[Greeter], w muss.Writer) (n int, err error) {
+	if m, ok := v.(exts.MarshallerTypedMUS); ok {
+		return m.MarshalTypedMUS(w)
+	}
+	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
+}
+
+func (s cmdMUS) Unmarshal(r muss.Reader) (v base.Cmd[Greeter], n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case SayHelloCmdDTM:
+		v, n1, err = SayHelloCmdDTS.UnmarshalData(r)
+	case SayFancyHelloCmdDTM:
+		v, n1, err = SayFancyHelloCmdDTS.UnmarshalData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}
+
+func (s cmdMUS) Size(v base.Cmd[Greeter]) (size int) {
+	if m, ok := v.(exts.MarshallerTypedMUS); ok {
+		return m.SizeTypedMUS()
+	}
+	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
+}
+
+func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case SayHelloCmdDTM:
+		n1, err = SayHelloCmdDTS.SkipData(r)
+	case SayFancyHelloCmdDTM:
+		n1, err = SayFancyHelloCmdDTS.SkipData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
+	return
+}
+
+var GreetingMUS = greetingMUS{}
+
+type greetingMUS struct{}
+
+func (s greetingMUS) Marshal(v Greeting, w muss.Writer) (n int, err error) {
+	return ord.String.Marshal(string(v), w)
+}
+
+func (s greetingMUS) Unmarshal(r muss.Reader) (v Greeting, n int, err error) {
+	tmp, n, err := ord.String.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	v = Greeting(tmp)
+	return
+}
+
+func (s greetingMUS) Size(v Greeting) (size int) {
+	return ord.String.Size(string(v))
+}
+
+func (s greetingMUS) Skip(r muss.Reader) (n int, err error) {
+	return ord.String.Skip(r)
+}
+
+var GreetingDTS = dts.New[Greeting](GreetingDTM, GreetingMUS)
+
 var ResultMUS = resultMUS{}
 
 type resultMUS struct{}
 
-func (s resultMUS) Marshal(v Result, w muss.Writer) (n int, err error) {
-	return ord.String.Marshal(v.str, w)
+func (s resultMUS) Marshal(v base.Result, w muss.Writer) (n int, err error) {
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Marshal(t, w)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
 }
 
-func (s resultMUS) Unmarshal(r muss.Reader) (v Result, n int, err error) {
-	v.str, n, err = ord.String.Unmarshal(r)
+func (s resultMUS) Unmarshal(r muss.Reader) (v base.Result, n int, err error) {
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case GreetingDTM:
+		v, n1, err = GreetingDTS.UnmarshalData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
 	return
 }
 
-func (s resultMUS) Size(v Result) (size int) {
-	return ord.String.Size(v.str)
+func (s resultMUS) Size(v base.Result) (size int) {
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Size(t)
+	default:
+		panic(fmt.Sprintf("unexpected %v type", t))
+	}
 }
 
 func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = ord.String.Skip(r)
+	dtm, n, err := dts.DTMSer.Unmarshal(r)
+	if err != nil {
+		return
+	}
+	var n1 int
+	switch dtm {
+	case GreetingDTM:
+		n1, err = GreetingDTS.SkipData(r)
+	default:
+		err = fmt.Errorf("unexpected %v DTM", dtm)
+		return
+	}
+	n += n1
 	return
 }
-
-var ResultDTS = dts.New[Result](ResultDTM, ResultMUS)

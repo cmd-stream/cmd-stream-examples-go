@@ -15,12 +15,11 @@ type GreeterService struct {
 
 func (s GreeterService) SayHello(ctx context.Context, str string) (string, error) {
 	cmd := hw.NewSayHelloCmd(str)
-
-	result, err := SendCmd[hw.Greeter, hw.Result](ctx, cmd, s.client)
+	result, err := SendCmd[hw.Greeter, hw.Greeting](ctx, cmd, s.client)
 	if err != nil {
 		return "", err
 	}
-	return result.Greeting(), nil
+	return result.String(), nil
 }
 
 func SendCmd[T, R any](ctx context.Context, cmd base.Cmd[T],

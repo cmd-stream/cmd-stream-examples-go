@@ -9,8 +9,9 @@ import (
 
 	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 
-	assert_error "github.com/ymz-ncnk/assert/error"
-	assert_fatal "github.com/ymz-ncnk/assert/fatal"
+	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	asserterror "github.com/ymz-ncnk/assert/error"
+	assertfatal "github.com/ymz-ncnk/assert/fatal"
 )
 
 const Addr = "127.0.0.1:9004"
@@ -28,25 +29,29 @@ const Addr = "127.0.0.1:9004"
 // Client.Send() will return an error again.
 func TestReconnect(t *testing.T) {
 	// Start the server.
-	wgS := &sync.WaitGroup{}
-	server, err := hw.StartServer(Addr, hw.ServerCodec{},
-		hw.NewGreeter("Hello", "incredible", " "), wgS)
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		receiver    = hw.NewGreeter("Hello", "incredible", " ")
+		serverCodec = cdc.NewServerCodec(hw.ResultMUS, hw.CmdMUS)
+		wgS         = &sync.WaitGroup{}
+		server, err = hw.StartServer(Addr, serverCodec, receiver, wgS)
+	)
+	assertfatal.EqualError(err, nil, t)
 
 	// Create the client.
-	client, err := CreateReconnectClient(hw.ClientCodec{},
-		connFactory{})
-	assert_fatal.EqualError(err, nil, t)
+	var (
+		clientCodec = cdc.NewClientCodec(hw.CmdMUS, hw.ResultMUS)
+	)
+	client, err := CreateReconnectClient(clientCodec, connFactory{})
+	assertfatal.EqualError(err, nil, t)
 
 	// Close the server.
 	err = hw.CloseServer(server, wgS)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 
 	// Start the server again after some time.
 	time.Sleep(time.Second)
-	server, err = hw.StartServer(Addr, hw.ServerCodec{},
-		hw.NewGreeter("Hello", "incredible", " "), wgS)
-	assert_fatal.EqualError(err, nil, t)
+	server, err = hw.StartServer(Addr, serverCodec, receiver, wgS)
+	assertfatal.EqualError(err, nil, t)
 
 	// Wait for the client to reconnect.
 	time.Sleep(200 * time.Millisecond)
@@ -59,21 +64,23 @@ func TestReconnect(t *testing.T) {
 	wgR.Add(1)
 	go func() {
 		defer wgR.Done()
-		sayHelloCmd := hw.NewSayHelloCmd("world")
-		wantGreeting := "Hello world"
-		err = hw.Exchange[hw.Greeter, hw.Result](sayHelloCmd, timeout, client,
+		var (
+			sayHelloCmd  = hw.NewSayHelloCmd("world")
+			wantGreeting = hw.Greeting("Hello world")
+		)
+		err = hw.Exchange[hw.Greeter, hw.Greeting](sayHelloCmd, timeout, client,
 			wantGreeting)
-		assert_error.EqualError(err, nil, t)
+		asserterror.EqualError(err, nil, t)
 	}()
 	wgR.Wait()
 
 	// Close the client.
 	err = hw.CloseClient(client)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 
 	// Close the server.
 	err = hw.CloseServer(server, wgS)
-	assert_fatal.EqualError(err, nil, t)
+	assertfatal.EqualError(err, nil, t)
 }
 
 type connFactory struct{}

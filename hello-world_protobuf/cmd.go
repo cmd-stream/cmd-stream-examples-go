@@ -1,12 +1,13 @@
 package hwp
 
 import (
-	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 	"context"
 	"time"
 
+	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
+	muss "github.com/mus-format/mus-stream-go"
+
 	"github.com/cmd-stream/base-go"
-	"github.com/cmd-stream/transport-go"
 )
 
 // NewSayHelloCmd creates a new SayHelloCmd.
@@ -27,15 +28,19 @@ func (c SayHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 ) error {
 	var (
 		str      = receiver.Join(receiver.Interjection(), c.Str)
-		result   = NewResult(str)
+		result   = NewGreeting(str)
 		deadline = at.Add(hw.CmdSendDuration)
 	)
 	return proxy.SendWithDeadline(deadline, seq, result)
 }
 
-func (c SayHelloCmd) Marshal(w transport.Writer) (err error) {
-	_, err = SayHelloCmdDTS.Marshal(c, w)
-	return
+func (c SayHelloCmd) MarshalTypedProtobuf(w muss.Writer) (n int,
+	err error) {
+	return SayHelloCmdDTS.Marshal(c, w)
+}
+
+func (c SayHelloCmd) SizeTypedProtobuf() (size int) {
+	return SayHelloCmdDTS.Size(c)
 }
 
 // NewSayFancyHelloCmd creates a new SayFancyHelloCmd.
@@ -56,13 +61,17 @@ func (c SayFancyHelloCmd) Exec(ctx context.Context, at time.Time, seq base.Seq,
 ) error {
 	var (
 		str      = receiver.Join(receiver.Interjection(), receiver.Adjective(), c.Str)
-		result   = NewResult(str)
+		result   = NewGreeting(str)
 		deadline = at.Add(hw.CmdSendDuration)
 	)
 	return proxy.SendWithDeadline(deadline, seq, result)
 }
 
-func (c SayFancyHelloCmd) Marshal(w transport.Writer) (err error) {
-	_, err = SayFancyHelloCmdDTS.Marshal(c, w)
-	return
+func (c SayFancyHelloCmd) MarshalTypedProtobuf(w muss.Writer) (n int,
+	err error) {
+	return SayFancyHelloCmdDTS.Marshal(c, w)
+}
+
+func (c SayFancyHelloCmd) SizeTypedProtobuf() (size int) {
+	return SayFancyHelloCmdDTS.Size(c)
 }

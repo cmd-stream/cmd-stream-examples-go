@@ -1,27 +1,28 @@
 package hw
 
-import "github.com/cmd-stream/transport-go"
+import (
+	com "github.com/mus-format/common-go"
+	muss "github.com/mus-format/mus-stream-go"
+)
 
-// NewResult creates a new Result.
-func NewResult(str string) Result {
-	return Result{str}
-}
+const (
+	GreetingDTM com.DTM = iota
+)
 
-// Result implements the base.Result interface.
-type Result struct {
-	str string
-}
+type Greeting string
 
-func (r Result) Greeting() string {
-	return r.str
-}
-
-// All Commands in this tuttorial send back a single Result.
-func (r Result) LastOne() bool {
+func (g Greeting) LastOne() bool {
 	return true
 }
 
-func (r Result) Marshal(w transport.Writer) (err error) {
-	_, err = ResultDTS.Marshal(r, w)
-	return
+func (g Greeting) String() string {
+	return string(g)
+}
+
+func (g Greeting) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+	return GreetingDTS.Marshal(g, w)
+}
+
+func (g Greeting) SizeTypedMUS() (size int) {
+	return GreetingDTS.Size(g)
 }

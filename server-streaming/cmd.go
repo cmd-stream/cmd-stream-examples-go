@@ -5,10 +5,13 @@ import (
 	"time"
 
 	"github.com/cmd-stream/base-go"
-	"github.com/cmd-stream/transport-go"
+	com "github.com/mus-format/common-go"
+	muss "github.com/mus-format/mus-stream-go"
 
 	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
 )
+
+const SayFancyHelloMultiCmdDTM com.DTM = iota + 10
 
 // NewSayFancyHelloMultiCmd creates a new SayFancyHelloMultiCmd.
 func NewSayFancyHelloMultiCmd(str string) SayFancyHelloMultiCmd {
@@ -27,22 +30,25 @@ func (c SayFancyHelloMultiCmd) Exec(ctx context.Context, at time.Time,
 ) (err error) {
 	var (
 		deadline = at.Add(hw.CmdSendDuration)
-		result   = NewResult(receiver.Interjection(), false)
+		result   = NewGreeting(receiver.Interjection(), false)
 	)
 	err = proxy.SendWithDeadline(deadline, seq, result)
 	if err != nil {
 		return
 	}
-	result = NewResult(receiver.Adjective(), false)
+	result = NewGreeting(receiver.Adjective(), false)
 	err = proxy.Send(seq, result)
 	if err != nil {
 		return
 	}
-	result = NewResult(c.str, true)
+	result = NewGreeting(c.str, true)
 	return proxy.Send(seq, result)
 }
 
-func (c SayFancyHelloMultiCmd) Marshal(w transport.Writer) (err error) {
-	_, err = SayFancyHelloMultiCmdDTS.Marshal(c, w)
-	return
+func (c SayFancyHelloMultiCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+	return SayFancyHelloMultiCmdDTS.Marshal(c, w)
+}
+
+func (c SayFancyHelloMultiCmd) SizeTypedMUS() (size int) {
+	return SayFancyHelloMultiCmdDTS.Size(c)
 }
