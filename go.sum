@@ -30,6 +30,8 @@ github.com/mus-format/mus-stream-go v0.7.0 h1:FejG1zOcm7N1kssC7aanlcviUM+S3W4M7e
 github.com/mus-format/mus-stream-go v0.7.0/go.mod h1:QKUch4gu6y8vsj4JyMykYqhlOMMLhP8mlL7VrYv1y7s=
 github.com/mus-format/musgen-go v0.0.0-20250423221210-0beb46e504d1 h1:JrvBzmG47m8Nnf5K7HKgfbuvPZD3LQS2Mofc0m4uY+g=
 github.com/mus-format/musgen-go v0.0.0-20250423221210-0beb46e504d1/go.mod h1:7bwdQV92r9V7yWiWqPZYJT+hENS1IIKGQ44ppi+iXJE=
+github.com/mus-format/musgen-go v0.0.0-20250424132300-5e75c1b52677 h1:mCq3Yr5HZzdrHJKNgzJ3xToN6nhtfzjNO+HmRGYeAWs=
+github.com/mus-format/musgen-go v0.0.0-20250424132300-5e75c1b52677/go.mod h1:7bwdQV92r9V7yWiWqPZYJT+hENS1IIKGQ44ppi+iXJE=
 github.com/ymz-ncnk/assert v0.0.0-20250419220605-29aaec96e9bd h1:ikKwi1OozeuGNFZ/D4cTiq6BM/5EHIs4+3II5vZO7UA=
 github.com/ymz-ncnk/assert v0.0.0-20250419220605-29aaec96e9bd/go.mod h1:+lSOTrCyOPuvc0xuvK4uKhgQ0Ar3U/HJPpJZg73kvgE=
 github.com/ymz-ncnk/jointwork-go v0.0.0-20240428103805-1ee224bde88a h1:we5FNsUNYd+fdpb1wG72OsQW9PSxwZmZvdEX2MPKWr4=

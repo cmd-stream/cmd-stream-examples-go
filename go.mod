@@ -14,7 +14,7 @@ require (
 	github.com/mus-format/ext-mus-stream-go v0.0.0-20250409231738-600e5fc5beed
 	github.com/mus-format/ext-protobuf-stream-go v0.0.0-20250423190029-59211887ef2c
 	github.com/mus-format/mus-stream-go v0.7.0
-	github.com/mus-format/musgen-go v0.0.0-20250423221210-0beb46e504d1
+	github.com/mus-format/musgen-go v0.0.0-20250424132300-5e75c1b52677
 	github.com/ymz-ncnk/assert v0.0.0-20250419220605-29aaec96e9bd
 	google.golang.org/protobuf v1.36.6
 )

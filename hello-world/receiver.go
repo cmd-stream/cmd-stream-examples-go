@@ -1,3 +1,5 @@
+// receiver.go
+
 package hw
 
 import "strings"
@@ -11,8 +13,8 @@ func NewGreeter(interjection, adjective, sep string) Greeter {
 	}
 }
 
-// Greeter represents a Receiver and provides the functionality for creating
-// greetings.
+// Greeter represents a Receiver and provides the functionality for
+// creating greetings.
 type Greeter struct {
 	interjection string
 	adjective    string

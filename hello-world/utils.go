@@ -1,3 +1,5 @@
+// utils.go
+
 package hw
 
 import (
@@ -15,14 +17,12 @@ import (
 	"github.com/cmd-stream/handler-go"
 )
 
-// CmdSendDuration defines how long the client will try to send the Command.
-const CmdSendDuration = time.Second
-
-// CmdReceiveDuration specifies how long the server will wait for the next data
-// from the client, until it closes the connection.
+// CmdReceiveDuration specifies the timeout after which the server will
+// terminate the connection if no Command is received.
 const CmdReceiveDuration = time.Second
 
-// StartServer creates a TCP listener, configures and starts the server.
+// StartServer creates a listener, configures the server, and starts it
+// in a separate goroutine.
 func StartServer[T any](addr string, codec cser.Codec[T], receiver T,
 	wg *sync.WaitGroup) (server *bser.Server, err error) {
 	l, err := net.Listen("tcp", addr)
@@ -81,8 +81,10 @@ func StartServerWith[T any](addr string, codec cser.Codec[T],
 	return
 }
 
-// CreateClient establishes a connection to the server, configures and creates
-// a client.
+// utils.go
+
+// CreateClient establishes a connection to the server, configures and
+// creates a client.
 func CreateClient[T any](addr string, codec ccln.Codec[T]) (
 	client *bcln.Client[T], err error) {
 	conn, err := net.Dial("tcp", addr)
@@ -91,66 +93,74 @@ func CreateClient[T any](addr string, codec ccln.Codec[T]) (
 	}
 	var callback bcln.UnexpectedResultCallback = func(seq base.Seq,
 		result base.Result) {
-		fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
-			result)
+		fmt.Printf("unexpected result was received: seq %v, result %v\n",
+			seq, result)
 	}
 	return ccln.New(codec, conn,
-		// Use Transport configuration to set the buffers size. If absent default
-		// values from the bufio package are used.
-		// ccln.WithTransport(
-		// 	tcom.WithWriterBufSize(wsize),
-		// 	tcom.WithReaderBufSize(rsize),
-		// ),
-
 		ccln.WithBase(
-			// UnexpectedResultCallback handles unexpected results from the server. If
-			// you call Client.Forget(seq) for a command, its results will be handled
-			// by this function.
+			// UnexpectedResultCallback handles unexpected results from the
+			// server. If you call Client.Forget(seq) for a Command, its results
+			// will be handled by this function.
 			bcln.WithUnexpectedResultCallback(callback),
 		),
+		// Use Transport configuration to set the buffers size. If absent
+		// default values from the bufio package are used.
+		// ccln.WithTransport(
+		//   tcom.WithWriterBufSize(...),
+		//   tcom.WithReaderBufSize(...),
+		// ),
 	)
 }
 
-// CloseServer closes the server.
+// utils.go
+
+// CloseServer closes the server and waits for it to stop.
 func CloseServer(server *bser.Server, wg *sync.WaitGroup) (err error) {
 	err = server.Close()
 	if err != nil {
 		return
 	}
+
+	// There is also the Server.Shutdown() method, which allows the server
+	// to complete processing of already established connections without
+	// accepting new ones.
+
 	wg.Wait()
 	return
 }
 
+// utils.go
+
 // CloseClient closes the client and waits for it to stop.
-//
-// In general a client will be closed if:
-// - The Client.Close() method is called.
-// - The server disconnects the connection.
-//
-// In both cases, all uncompleted Commands will receive
-// AsyncResult.Error() == Client.Err(), where Client.Err() returns a
-// connection error.
 func CloseClient[T any](client *bcln.Client[T]) (err error) {
+	// Generally, the client will be closed if:
+	// - Client.Close() is called.
+	// - The server terminates the connection.
+	//
+	// In both cases, all uncompleted Commands will receive
+	// AsyncResult.Error() == Client.Err(), where Client.Err() returns a
+	// connection error.
+
 	err = client.Close()
 	if err != nil {
 		return
 	}
-	// The client receives results from the server in the background, so we have
-	// to wait for it to stop.
+	// The client receives Results from the server in the background, so we
+	// have to wait until it stops.
 	select {
 	case <-time.NewTimer(time.Second).C:
-		return errors.New("unable to close the client, timeout exceeded")
+		return errors.New("timeout exceeded")
 	case <-client.Done():
 		return
 	}
 }
 
-// type GreetingResult interface {
-// 	Greeting() string
-// }
+// CmdSendDuration defines the time during which the command should be
+// sent.
+const CmdSendDuration = time.Second
 
-// Exchange sends a Command and checks whether the received greeting matches the
-// expected value.
+// Exchange sends a Command and checks whether the received greeting
+// matches the expected value.
 func Exchange[T any, R interface{ String() string }](cmd base.Cmd[T],
 	timeout time.Duration,
 	client *bcln.Client[T],

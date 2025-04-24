@@ -1,11 +1,8 @@
+// result.go
+
 package hw
 
-import (
-	com "github.com/mus-format/common-go"
-	muss "github.com/mus-format/mus-stream-go"
-)
-
-const GreetingDTM com.DTM = iota
+import muss "github.com/mus-format/mus-stream-go"
 
 type Greeting string
 
