@@ -10,6 +10,8 @@ is one example):
 - reconnect: Demonstrates how the client can reconnect to the server after
   losing the connection.
 - server-streaming: An example where the Command sends back multiple Results.
+- group: Shows how to use the client group to establish a high-performance 
+  communication channel with the server.
 - rpc: Demonstrates how to implement RPC using cmd-stream-go.
 - tls: Shows how to use cmd-stream-go with TLS.
 

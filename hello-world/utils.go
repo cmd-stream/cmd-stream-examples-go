@@ -81,8 +81,6 @@ func StartServerWith[T any](addr string, codec cser.Codec[T],
 	return
 }
 
-// utils.go
-
 // CreateClient establishes a connection to the server, configures and
 // creates a client.
 func CreateClient[T any](addr string, codec ccln.Codec[T]) (
@@ -112,8 +110,6 @@ func CreateClient[T any](addr string, codec ccln.Codec[T]) (
 	)
 }
 
-// utils.go
-
 // CloseServer closes the server and waits for it to stop.
 func CloseServer(server *bser.Server, wg *sync.WaitGroup) (err error) {
 	err = server.Close()
@@ -128,8 +124,6 @@ func CloseServer(server *bser.Server, wg *sync.WaitGroup) (err error) {
 	wg.Wait()
 	return
 }
-
-// utils.go
 
 // CloseClient closes the client and waits for it to stop.
 func CloseClient[T any](client *bcln.Client[T]) (err error) {
