@@ -1,18 +1,18 @@
 # cmd-stream-examples-go
 This repository contains several examples of using cmd-stream-go (each package 
 is one example):
-- echo: A minimal example.
-- hello-world: Shows the basic usage of cmd-stream-go.
-- hello-world_protobuf: Demonstrates the basic usage of cmd-stream-go with the 
+- `echo`: A minimal example.
+- `hello-world`: Shows the basic usage of cmd-stream-go.
+- `hello-world_protobuf`: Demonstrates the basic usage of cmd-stream-go with the 
   Protobuf serializer.
-- keepalive: Shows how the client can keep a connection alive when there are no 
+- `keepalive`: Shows how the client can keep a connection alive when there are no 
   Commands to send.
-- reconnect: Demonstrates how the client can reconnect to the server after
+- `reconnect`: Demonstrates how the client can reconnect to the server after
   losing the connection.
-- server-streaming: An example where the Command sends back multiple Results.
-- group: Shows how to use the client group to establish a high-performance 
+- `server-streaming`: An example where the Command sends back multiple Results.
+- `group`: Shows how to use the client group to establish a high-performance 
   communication channel with the server.
-- rpc: Demonstrates how to implement RPC using cmd-stream-go.
-- tls: Shows how to use cmd-stream-go with TLS.
+- `rpc`: Demonstrates how to implement RPC using cmd-stream-go.
+- `tls`: Shows how to use cmd-stream-go with TLS.
 
 More details can be found in the corresponding `..._test.go` files.
