@@ -1,13 +1,11 @@
 package group
 
 import (
-	"net"
 	"sync"
 	"testing"
 	"time"
 
 	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
-	ccln "github.com/cmd-stream/cmd-stream-go/client"
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
 	asserterror "github.com/ymz-ncnk/assert/error"
 	assertfatal "github.com/ymz-ncnk/assert/fatal"
@@ -43,18 +41,9 @@ func TestClientGroup(t *testing.T) {
 }
 
 func SendCmds(addr string, t *testing.T) {
-	// Create the client group.
 	var (
 		codec   = cdc.NewClientCodec(hw.CmdMUS, hw.ResultMUS)
-		factory = ccln.ConnFactoryFn(func() (net.Conn, error) {
-			return net.Dial("tcp", addr)
-		})
-		clients  = ccln.MustMakeClients(2, codec, factory)
-		strategy = ccln.NewRoundRobinStrategy(clients)
-	)
-	grp := ccln.NewGroup(strategy)
-
-	var (
+		grp     = CreateClientGroup(addr, 2, codec)
 		wgR     = &sync.WaitGroup{}
 		timeout = 3 * time.Second
 	)
@@ -82,7 +71,7 @@ func SendCmds(addr string, t *testing.T) {
 	}()
 	wgR.Wait()
 
-	// Close the client.
+	// Close the client group.
 	err := CloseGroup(grp)
 	assertfatal.EqualError(err, nil, t)
 }

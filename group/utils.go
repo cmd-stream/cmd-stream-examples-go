@@ -3,11 +3,14 @@ package group
 import (
 	"errors"
 	"fmt"
+	"net"
 	"time"
 
 	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
+	dcln "github.com/cmd-stream/delegate-go/client"
 
 	"github.com/cmd-stream/base-go"
+	bcln "github.com/cmd-stream/base-go/client"
 	ccln "github.com/cmd-stream/cmd-stream-go/client"
 )
 
@@ -48,6 +51,43 @@ func Exchange[T any, R interface{ String() string }](cmd base.Cmd[T],
 			greeting)
 	}
 	return
+}
+
+// CreateClientGroup establishes several connections to the server, configures
+// and creates a client group.
+func CreateClientGroup(addr string, clientCount int,
+	codec ccln.Codec[hw.Greeter]) ccln.Group[hw.Greeter] {
+	var (
+		// codec   = cdc.NewClientCodec(CmdMUS, ResultMUS)
+		factory = ccln.ConnFactoryFn(func() (net.Conn, error) {
+			return net.Dial("tcp", addr)
+		})
+		callback bcln.UnexpectedResultCallback = func(seq base.Seq,
+			result base.Result) {
+			fmt.Printf("unexpected result was received: seq %v, result %v\n",
+				seq, result)
+		}
+		clients = ccln.MustMakeClients(clientCount, codec, factory,
+			ccln.WithBase(
+				// UnexpectedResultCallback handles unexpected results from the
+				// server. If you call Client.Forget(seq) for a Command, its results
+				// will be handled by this function.
+				bcln.WithUnexpectedResultCallback(callback),
+			),
+			ccln.WithKeepalive(
+				dcln.WithKeepaliveIntvl(time.Second),
+				dcln.WithKeepaliveTime(time.Second),
+			),
+			// Use Transport configuration to set the buffers size. If absent
+			// default values from the bufio package are used.
+			// ccln.WithTransport(
+			//   tcom.WithWriterBufSize(...),
+			//   tcom.WithReaderBufSize(...),
+			// ),
+		)
+		strategy = ccln.NewRoundRobinStrategy(clients)
+	)
+	return ccln.NewGroup(strategy)
 }
 
 // CloseGroup closes the client group and waits for it to stop.
