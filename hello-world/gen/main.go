@@ -80,7 +80,9 @@ func main() {
 
 	// base.Result interface
 	err = g.AddInterface(reflect.TypeFor[base.Result](),
-		introps.WithImpl(greetingType))
+		introps.WithImpl(greetingType),
+		introps.WithMarshaller(),
+	)
 	assert.EqualError(err, nil)
 
 	// Generate
