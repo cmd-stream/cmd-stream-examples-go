@@ -58,7 +58,6 @@ func Exchange[T any, R interface{ String() string }](cmd base.Cmd[T],
 func CreateClientGroup(addr string, clientCount int,
 	codec ccln.Codec[hw.Greeter]) ccln.Group[hw.Greeter] {
 	var (
-		// codec   = cdc.NewClientCodec(CmdMUS, ResultMUS)
 		factory = ccln.ConnFactoryFn(func() (net.Conn, error) {
 			return net.Dial("tcp", addr)
 		})
